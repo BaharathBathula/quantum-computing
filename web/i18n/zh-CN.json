@@ -3,7 +3,7 @@
 
   "lang.label": "语言",
 
-  "hero.eyebrow": "quantum-computing-9 项目配套页面",
+  "hero.eyebrow": "quantum-computing 项目配套页面",
   "hero.title": "量子实验室",
   "hero.lede": "九个实验，对应信息图上的九个概念。本页的每一个数字都来自在你浏览器里运行的量子态模拟器：改动一个设置，看看物理会怎样回答。",
   "hero.legend": "条的长度是概率。条的颜色是相位：相位从 0° 转到 360° 时，颜色绕这个色轮转一圈。",
@@ -232,5 +232,6 @@
 
   "foot.1": "所有模拟都在本页本地运行。背后的 Python 项目在 Qiskit 2.6 上运行同样的实验，附带完整测试套件、课后练习和信息图勘误清单。",
   "foot.2": "时间线来源：<a href=\"https://www.networkworld.com/article/4077876/googles-quantum-chip-achieves-13000x-speed-advantage-over-supercomputers-2.html\" target=\"_blank\" rel=\"noopener\">Network World 关于 Quantum Echoes 的报道</a> · <a href=\"https://thequantuminsider.com/2026/04/30/ibms-krishna-predicts-first-real-world-quantum-advantage-in-2026/embed/\" target=\"_blank\" rel=\"noopener\">The Quantum Insider 关于 IBM 2026 年展望的报道</a>",
+  "foot.repo": "源代码、练习与课程大纲：<a href=\"https://github.com/BaharathBathula/quantum-computing\" target=\"_blank\" rel=\"noopener\">github.com/BaharathBathula/quantum-computing</a>",
   "foot.3": "翻译由社区维护。要改进本翻译或添加新语言，请参阅项目中的 CONTRIBUTING.md。"
 }

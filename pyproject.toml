@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "quantum-computing-9"
+name = "quantum-computing"
 version = "1.0.0"
 description = "Nine quantum computing concepts as runnable, tested Qiskit code, with take-home exercises, a curriculum and an interactive lab."
 readme = "README.md"

@@ -2,7 +2,8 @@
 
 ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-3776ab)
 ![Qiskit 2.x](https://img.shields.io/badge/qiskit-2.6-6929c4)
-![Tests](https://img.shields.io/badge/tests-199%20passing-16a34a)
+[![CI](https://github.com/BaharathBathula/quantum-computing/actions/workflows/ci.yml/badge.svg)](https://github.com/BaharathBathula/quantum-computing/actions/workflows/ci.yml)
+[![Quantum Lab](https://github.com/BaharathBathula/quantum-computing/actions/workflows/pages.yml/badge.svg)](https://baharathbathula.github.io/quantum-computing/)
 ![Lab languages](https://img.shields.io/badge/lab-8%20languages-8f6110)
 ![License MIT](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -23,13 +24,13 @@ qubits → superposition → entanglement → gates → algorithms
 | **A candidate or learner** | `pip install -e .` then `python grade.py` — nine exercises, instant feedback | 2–4 h |
 | **An instructor** | [`CURRICULUM.md`](CURRICULUM.md) — objectives, demos, labs, assessment per session | 15 min |
 | **Reviewing the engineering** | the "Five-minute review" below | 5 min |
-| **Just curious** | open `web/quantum-lab.html` in any browser (no install, works offline) | 2 min |
+| **Just curious** | **[Open the Quantum Lab](https://baharathbathula.github.io/quantum-computing/)** in any browser, or `web/quantum-lab.html` offline | 2 min |
 
 ## Quick start
 
 ```bash
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+pip install -e ".[dev]"              # or: git clone https://github.com/BaharathBathula/quantum-computing.git first
 qlab run                   # all 9 concepts, ~1 minute, figures in outputs/
 qlab test                  # 110 project tests, ~15 s
 qlab grade                 # the take-home scorecard (0/9 until you implement exercises/)
@@ -38,7 +39,7 @@ qlab grade                 # the take-home scorecard (0/9 until you implement ex
 No account anywhere: hardware effects come from a stored calibration snapshot of a
 156-qubit IBM Heron chip. To submit to a real device: `python -m concepts.c07_hardware --real`.
 
-Prefer containers? `docker build -t quantum-computing-9 . && docker run --rm quantum-computing-9`.
+Prefer containers? `docker build -t quantum-computing . && docker run --rm quantum-computing`.
 Prefer notebooks? `notebooks/tour.ipynb` is pre-executed with every figure inline.
 
 ## Five-minute review (for engineers and hiring managers)
@@ -90,6 +91,8 @@ maps each exercise to the skill it probes and gives a code-reading rubric.
 
 ## The Quantum Lab (web/)
 
+**Live: [baharathbathula.github.io/quantum-computing](https://baharathbathula.github.io/quantum-computing/)**
+
 One self-contained HTML file: nine interactive panels on a JavaScript statevector
 simulator that reproduces the Python results (CHSH 2.828, Grover, GHZ, T1/T2…).
 Light and dark themes, keyboard and screen-reader accessible, works from `file://`.
@@ -101,7 +104,7 @@ afternoon ([`CONTRIBUTING.md`](CONTRIBUTING.md)). `web/build.py` inlines them in
 ## Project layout
 
 ```
-quantum-computing-9/
+quantum-computing/
 ├── concepts/              one runnable module per concept (c01 … c09)
 ├── qlab/                  statevector.py (NumPy simulator), backend.py (run helpers, Heron noise), cli.py
 ├── exercises/             take-home stubs  ·  exercises/solutions/  reference implementations
@@ -148,6 +151,11 @@ flowchart LR
 - Factor 15 with Shor: replace `period_finding`'s prepared state with modular exponentiation.
 - Run `c09`'s XEB experiment on real hardware with `--real` and compare to the noise model.
 - Add your language to the lab, or a tenth concept (BB84 is a natural one).
+
+## Adopters
+
+Using this in a course, a workshop or a hiring process? Open a pull request and add your
+institution or company here so others can find you.
 
 ## Licence
 

@@ -31,6 +31,8 @@
   --phase-l:63%; color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
 .wrap{max-width:46rem;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -164,7 +166,7 @@ footer{padding-block:2.4rem 3rem;color:var(--muted);font-size:.86rem}
 footer .wrap{display:grid;gap:.6rem}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
-
+<!--__BODY__-->
 <header class="hero wrap">
   <span class="eyebrow" data-i18n="hero.eyebrow"></span>
   <h1 data-i18n="hero.title"></h1>
@@ -434,6 +436,7 @@ footer .wrap{display:grid;gap:.6rem}
   <div class="wrap">
     <p data-i18n="foot.1"></p>
     <p data-i18n="foot.2"></p>
+    <p data-i18n="foot.repo"></p>
     <p data-i18n="foot.3"></p>
   </div>
 </footer>

@@ -3,7 +3,7 @@
 
   "lang.label": "Sprache",
 
-  "hero.eyebrow": "Begleitseite zum Projekt quantum-computing-9",
+  "hero.eyebrow": "Begleitseite zum Projekt quantum-computing",
   "hero.title": "Quantenlabor",
   "hero.lede": "Neun Experimente, eines für jedes Konzept der Infografik. Jede Zahl auf dieser Seite stammt aus einem Quantenzustands-Simulator, der in Ihrem Browser läuft: Ändern Sie eine Einstellung und sehen Sie, wie die Physik antwortet.",
   "hero.legend": "Die Balkenlänge ist die Wahrscheinlichkeit. Die Balkenfarbe ist die Phase: Sie wandert um dieses Rad, während die Phase von 0° bis 360° läuft.",
@@ -232,5 +232,6 @@
 
   "foot.1": "Alle Simulationen laufen lokal auf dieser Seite. Das dahinterstehende Python-Projekt führt dieselben Experimente auf Qiskit 2.6 aus, mit vollständiger Testsuite, Übungsaufgaben und einer Liste von Korrekturen an der Infografik.",
   "foot.2": "Quellen für die Zeitleiste: <a href=\"https://www.networkworld.com/article/4077876/googles-quantum-chip-achieves-13000x-speed-advantage-over-supercomputers-2.html\" target=\"_blank\" rel=\"noopener\">Network World zu Quantum Echoes</a> · <a href=\"https://thequantuminsider.com/2026/04/30/ibms-krishna-predicts-first-real-world-quantum-advantage-in-2026/embed/\" target=\"_blank\" rel=\"noopener\">The Quantum Insider zu IBMs Ausblick 2026</a>",
+  "foot.repo": "Quellcode, Übungen und Lehrplan: <a href=\"https://github.com/BaharathBathula/quantum-computing\" target=\"_blank\" rel=\"noopener\">github.com/BaharathBathula/quantum-computing</a>",
   "foot.3": "Die Übersetzungen werden von der Community gepflegt. Um diese zu verbessern oder eine Sprache hinzuzufügen, siehe CONTRIBUTING.md im Projekt."
 }

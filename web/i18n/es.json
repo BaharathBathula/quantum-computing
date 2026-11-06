@@ -3,7 +3,7 @@
 
   "lang.label": "Idioma",
 
-  "hero.eyebrow": "Complemento del proyecto quantum-computing-9",
+  "hero.eyebrow": "Complemento del proyecto quantum-computing",
   "hero.title": "Laboratorio cuántico",
   "hero.lede": "Nueve experimentos, uno por cada concepto de la infografía. Cada número de esta página sale de un simulador de estados cuánticos que corre en tu navegador: cambia un ajuste y mira cómo responde la física.",
   "hero.legend": "La longitud de la barra es la probabilidad. El color es la fase: recorre esta rueda cuando la fase va de 0° a 360°.",
@@ -232,5 +232,6 @@
 
   "foot.1": "Todas las simulaciones corren localmente en esta página. El proyecto en Python que hay detrás ejecuta los mismos experimentos en Qiskit 2.6 con una batería de pruebas completa, ejercicios para casa y una lista de correcciones a la infografía.",
   "foot.2": "Fuentes de la cronología: <a href=\"https://www.networkworld.com/article/4077876/googles-quantum-chip-achieves-13000x-speed-advantage-over-supercomputers-2.html\" target=\"_blank\" rel=\"noopener\">Network World sobre Quantum Echoes</a> · <a href=\"https://thequantuminsider.com/2026/04/30/ibms-krishna-predicts-first-real-world-quantum-advantage-in-2026/embed/\" target=\"_blank\" rel=\"noopener\">The Quantum Insider sobre las previsiones de IBM para 2026</a>",
+  "foot.repo": "Código fuente, ejercicios y plan de estudios: <a href=\"https://github.com/BaharathBathula/quantum-computing\" target=\"_blank\" rel=\"noopener\">github.com/BaharathBathula/quantum-computing</a>",
   "foot.3": "Las traducciones las mantiene la comunidad. Para mejorar esta o añadir un idioma, consulta CONTRIBUTING.md en el proyecto."
 }

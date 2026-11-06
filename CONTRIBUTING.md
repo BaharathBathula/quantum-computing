@@ -6,7 +6,7 @@ especially welcome, and each has a checklist below.
 ## Setup
 
 ```bash
-git clone <this repo> && cd quantum-computing-9
+git clone https://github.com/BaharathBathula/quantum-computing.git && cd quantum-computing
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest                                   # project tests (~15 s)

@@ -3,7 +3,7 @@
 
   "lang.label": "Language",
 
-  "hero.eyebrow": "Companion to the quantum-computing-9 project",
+  "hero.eyebrow": "Companion to the quantum-computing project",
   "hero.title": "Quantum Lab",
   "hero.lede": "Nine experiments, one for each concept on the infographic. Every number on this page comes from a quantum state simulator running in your browser, so you can change a setting and watch the physics answer.",
   "hero.legend": "Bar length is probability. Bar colour is phase: the colour turns around this wheel as the phase goes from 0° to 360°.",
@@ -232,5 +232,6 @@
 
   "foot.1": "All simulations run locally in this page. The Python project behind it runs the same experiments on Qiskit 2.6 with a full test-suite, take-home exercises and a list of infographic corrections.",
   "foot.2": "Sources for the timeline: <a href=\"https://www.networkworld.com/article/4077876/googles-quantum-chip-achieves-13000x-speed-advantage-over-supercomputers-2.html\" target=\"_blank\" rel=\"noopener\">Network World on Quantum Echoes</a> · <a href=\"https://thequantuminsider.com/2026/04/30/ibms-krishna-predicts-first-real-world-quantum-advantage-in-2026/embed/\" target=\"_blank\" rel=\"noopener\">The Quantum Insider on IBM’s 2026 outlook</a>",
+  "foot.repo": "Source code, exercises and curriculum: <a href=\"https://github.com/BaharathBathula/quantum-computing\" target=\"_blank\" rel=\"noopener\">github.com/BaharathBathula/quantum-computing</a>",
   "foot.3": "Translations are community-maintained. To improve this one or add a language, see CONTRIBUTING.md in the project."
 }

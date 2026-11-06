@@ -59,4 +59,4 @@ jobs:
       - name: Run all nine concepts end to end
         run: python run_all.py --no-plots
       - name: Docker image builds
-        run: docker build -t quantum-computing-9 .
+        run: docker build -t quantum-computing .

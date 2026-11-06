@@ -3,7 +3,7 @@
 
   "lang.label": "言語",
 
-  "hero.eyebrow": "quantum-computing-9 プロジェクトの付属ページ",
+  "hero.eyebrow": "quantum-computing プロジェクトの付属ページ",
   "hero.title": "量子ラボ",
   "hero.lede": "インフォグラフィックの9つの概念に対応する9つの実験。このページのすべての数値は、ブラウザ内で動く量子状態シミュレータから得られたものです。設定を変えて、物理がどう答えるかを見てください。",
   "hero.legend": "バーの長さは確率です。バーの色は位相で、位相が0°から360°へ進むにつれて、色はこの色相環を一周します。",
@@ -232,5 +232,6 @@
 
   "foot.1": "すべてのシミュレーションはこのページ内でローカルに実行されます。背後にあるPythonプロジェクトは、同じ実験をQiskit 2.6上で実行し、完全なテストスイート、持ち帰り課題、インフォグラフィックの訂正一覧を備えています。",
   "foot.2": "年表の出典：<a href=\"https://www.networkworld.com/article/4077876/googles-quantum-chip-achieves-13000x-speed-advantage-over-supercomputers-2.html\" target=\"_blank\" rel=\"noopener\">Quantum EchoesについてのNetwork World</a> · <a href=\"https://thequantuminsider.com/2026/04/30/ibms-krishna-predicts-first-real-world-quantum-advantage-in-2026/embed/\" target=\"_blank\" rel=\"noopener\">IBMの2026年の見通しについてのThe Quantum Insider</a>",
+  "foot.repo": "ソースコード、演習、カリキュラム：<a href=\"https://github.com/BaharathBathula/quantum-computing\" target=\"_blank\" rel=\"noopener\">github.com/BaharathBathula/quantum-computing</a>",
   "foot.3": "翻訳はコミュニティが維持しています。改善や言語の追加は、プロジェクトのCONTRIBUTING.mdをご覧ください。"
 }

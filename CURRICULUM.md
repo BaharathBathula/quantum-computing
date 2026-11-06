@@ -18,7 +18,7 @@ reused and adapted under the same terms with attribution.
 ## Setup for instructors (once, ~15 min)
 
 ```bash
-pip install -e ".[dev]"           # or: docker build -t quantum-computing-9 .
+pip install -e ".[dev]"           # or: docker build -t quantum-computing .
 python run_all.py                 # all nine demos + figures in outputs/
 pytest                            # must be green
 python grade.py --solutions       # must be 9/9
@@ -26,7 +26,8 @@ python grade.py --solutions       # must be 9/9
 
 Low-bandwidth classrooms: install once on one machine, then distribute the project
 folder and the `pip wheel` cache on USB sticks. The lab (`web/quantum-lab.html`)
-needs no server: open it directly from the file. The only files that load from the
+needs no server: open it directly from the file, or online at
+https://baharathbathula.github.io/quantum-computing/. The only files that load from the
 internet are two web fonts, and the page works without them.
 
 Hardware access is optional: session 7 includes `--real` for IBM's free tier, but the
@@ -137,5 +138,5 @@ running it.
   `run_on_real_ibm` is 15 lines; swapping in another provider's SDK is a good student task.
 - **Accessibility:** the lab works with keyboard navigation and screen readers (ARIA labels
   on all controls), respects reduced-motion settings, and renders in light and dark mode.
-- **Attribution:** keep the licence file and the corrections list; add your institution's
-  name to the README's "used at" list via a pull request so others can find you.
+- **Attribution:** keep the licence file and the corrections list; add your institution to
+  the README's "Adopters" section via a pull request so others can find you.

@@ -1,8 +1,9 @@
 """
 Build web/quantum-lab.html from web/src/template.html + web/i18n/*.json.
 
-    python web/build.py           # rebuild
-    python web/build.py --check   # CI: translations complete + built page current (exit 1 otherwise)
+    python web/build.py                    # rebuild web/quantum-lab.html (standalone page)
+    python web/build.py --check            # CI: translations complete + built page current (exit 1 otherwise)
+    python web/build.py --fragment out.html  # content-only build for hosts that add their own <html> skeleton
 
 Translation files are validated against en.json: same keys, no empty strings,
 the same {placeholders} and the same inline HTML tags in every value.
@@ -58,13 +59,34 @@ def validate(translations: dict[str, dict[str, str]]) -> list[str]:
     return problems
 
 
-def render(translations: dict[str, dict[str, str]]) -> str:
+BODY_MARKER = "<!--__BODY__-->"
+SKELETON_HEAD = (
+    "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
+    '<meta charset="utf-8">\n'
+    '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+    '<meta name="description" content="Nine interactive quantum computing experiments on an in-browser '
+    'simulator: qubits, superposition, entanglement, gates, Grover, circuits, hardware noise, error '
+    'correction and quantum advantage. Eight languages, works offline.">\n'
+    "<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>\n"
+)
+
+
+def render(translations: dict[str, dict[str, str]], fragment: bool = False) -> str:
+    """Full standalone document by default (GitHub Pages, file://).
+
+    fragment=True returns only the page content, for hosts that wrap it in their own
+    <html>/<head>/<body> skeleton (the claude.ai artifact viewer does)."""
     template = TEMPLATE.read_text(encoding="utf-8")
-    if MARKER not in template:
-        raise SystemExit(f"template is missing the marker {MARKER}")
+    for marker in (MARKER, BODY_MARKER):
+        if marker not in template:
+            raise SystemExit(f"template is missing the marker {marker}")
     bundle = json.dumps(translations, ensure_ascii=False, separators=(",", ":"))
     bundle = bundle.replace("</script", "<\\/script")  # never close the page's own script tag
-    return template.replace(MARKER, "/*__I18N__*/" + bundle)
+    page = template.replace(MARKER, "/*__I18N__*/" + bundle)
+    head, body = page.split(BODY_MARKER, 1)
+    if fragment:
+        return head + body
+    return SKELETON_HEAD + head.strip() + "\n</head>\n<body>" + body.rstrip() + "\n</body>\n</html>\n"
 
 
 def main(argv: list[str]) -> int:
@@ -73,6 +95,11 @@ def main(argv: list[str]) -> int:
     if problems:
         print("\n".join(problems))
         return 1
+    if "--fragment" in argv:  # --fragment OUT.html: content-only build for wrapping hosts
+        out = Path(argv[argv.index("--fragment") + 1])
+        out.write_text(render(translations, fragment=True), encoding="utf-8")
+        print(f"wrote fragment {out}")
+        return 0
     html = render(translations)
     if "--check" in argv:
         current = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""

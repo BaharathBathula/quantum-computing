@@ -3,7 +3,7 @@
 
   "lang.label": "भाषा",
 
-  "hero.eyebrow": "quantum-computing-9 प्रोजेक्ट का साथी पृष्ठ",
+  "hero.eyebrow": "quantum-computing प्रोजेक्ट का साथी पृष्ठ",
   "hero.title": "क्वांटम प्रयोगशाला",
   "hero.lede": "नौ प्रयोग, इन्फोग्राफ़िक की हर अवधारणा के लिए एक। इस पृष्ठ का हर आँकड़ा आपके ब्राउज़र में चल रहे क्वांटम-अवस्था सिम्युलेटर से आता है: कोई सेटिंग बदलिए और देखिए भौतिकी क्या जवाब देती है।",
   "hero.legend": "बार की लंबाई प्रायिकता है। बार का रंग कला (फ़ेज़) है: कला 0° से 360° तक जाते हुए रंग इस चक्र पर घूमता है।",
@@ -232,5 +232,6 @@
 
   "foot.1": "सारी सिम्युलेशन इसी पृष्ठ पर स्थानीय रूप से चलती हैं। इसके पीछे का पायथन प्रोजेक्ट वही प्रयोग Qiskit 2.6 पर चलाता है, पूरी टेस्ट-सूट, घर से हल करने वाले अभ्यासों और इन्फोग्राफ़िक सुधारों की सूची के साथ।",
   "foot.2": "समयरेखा के स्रोत: <a href=\"https://www.networkworld.com/article/4077876/googles-quantum-chip-achieves-13000x-speed-advantage-over-supercomputers-2.html\" target=\"_blank\" rel=\"noopener\">Quantum Echoes पर Network World</a> · <a href=\"https://thequantuminsider.com/2026/04/30/ibms-krishna-predicts-first-real-world-quantum-advantage-in-2026/embed/\" target=\"_blank\" rel=\"noopener\">IBM के 2026 के अनुमान पर The Quantum Insider</a>",
+  "foot.repo": "स्रोत कोड, अभ्यास और पाठ्यक्रम: <a href=\"https://github.com/BaharathBathula/quantum-computing\" target=\"_blank\" rel=\"noopener\">github.com/BaharathBathula/quantum-computing</a>",
   "foot.3": "अनुवाद समुदाय द्वारा संभाले जाते हैं। इसे बेहतर बनाने या कोई भाषा जोड़ने के लिए प्रोजेक्ट का CONTRIBUTING.md देखें।"
 }
