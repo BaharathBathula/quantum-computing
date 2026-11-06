@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantum-computing-9"
+version = "1.0.0"
+description = "Nine quantum computing concepts as runnable, tested Qiskit code, with take-home exercises, a curriculum and an interactive lab."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Baharath Bathula" }]
+keywords = ["quantum computing", "qiskit", "education", "grover", "error correction", "bell test"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Education",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Education",
+]
+dependencies = [
+  "qiskit>=2.0",
+  "qiskit-aer>=0.17",
+  "qiskit-ibm-runtime>=0.40",
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "matplotlib>=3.8",
+  "pylatexenc>=2.10",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5", "nbformat>=5.10", "nbclient>=0.10", "ipykernel>=6"]
+
+[project.scripts]
+qlab = "qlab.cli:main"
+
+[tool.setuptools]
+packages = ["qlab", "concepts", "exercises", "exercises.solutions"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["outputs", "notebooks", "web"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "N", "SIM", "RUF"]
+ignore = [
+  "N802", "N803", "N806",  # physics names: H, N, E, S, T1 are clearer than snake_case
+  "RUF001", "RUF002", "RUF003",  # Unicode ket symbols and arrows in strings/comments are intentional
+  "SIM108",  # explicit if/else reads better than a ternary in teaching code
+  "B905",    # zip(strict=) adds noise to teaching code; lengths are checked by the tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+"exercises/ex*.py" = ["B904", "ARG001"]
+"tests/*" = ["B011"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-m 'not exercises'"
+markers = ["exercises: autograded take-home exercises (run with: pytest -m exercises)"]
+filterwarnings = ["ignore::DeprecationWarning"]
