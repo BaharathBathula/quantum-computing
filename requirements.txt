@@ -1,0 +1,9 @@
+# Tested with Python 3.13, qiskit 2.6.2, qiskit-aer 0.18.2, qiskit-ibm-runtime 0.51.0
+qiskit>=2.0
+qiskit-aer>=0.17
+qiskit-ibm-runtime>=0.40   # IBM device snapshots (FakeFez) + optional real-hardware runs
+scipy>=1.11
+numpy>=1.26
+matplotlib>=3.8
+pylatexenc>=2.10           # needed by qc.draw("mpl")
+pytest>=8
