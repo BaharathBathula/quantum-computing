@@ -1,0 +1,985 @@
+<title>Quantum Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Public+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column (max 46rem) behind a sticky rail of the nine concepts;
+   each concept = short prose + one instrument panel on engineering grid + an infographic check.
+   Built from web/src/template.html + web/i18n/*.json by web/build.py. */
+:root{
+  --paper:#f2f4f7; --panel:#ffffff; --ink:#142035; --muted:#566275; --rule:#d9dfe8;
+  --grid:rgba(20,32,53,.05); --sphere:rgba(20,32,53,.035);
+  --accent:#8f6110; --accent-soft:#f3e6c8; --signal:#2b5fb4; --good:#16703f; --bad:#b02525;
+  --phase-l:44%;
+  --display:"Young Serif", Georgia, "Times New Roman", "Noto Serif", serif;
+  --body:"Public Sans", "Noto Sans", "Noto Sans Devanagari", "Noto Sans SC", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0d131d; --panel:#141c29; --ink:#e4e9f1; --muted:#97a2b5; --rule:#283245;
+    --grid:rgba(228,233,241,.045); --sphere:rgba(228,233,241,.04);
+    --accent:#dcab4c; --accent-soft:#3a2f18; --signal:#7ea6f2; --good:#58c98a; --bad:#f27a7a;
+    --phase-l:63%; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0d131d; --panel:#141c29; --ink:#e4e9f1; --muted:#97a2b5; --rule:#283245;
+  --grid:rgba(228,233,241,.045); --sphere:rgba(228,233,241,.04);
+  --accent:#dcab4c; --accent-soft:#3a2f18; --signal:#7ea6f2; --good:#58c98a; --bad:#f27a7a;
+  --phase-l:63%; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:46rem;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--signal)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+h1,h2{font-family:var(--display);font-weight:400;text-wrap:balance;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(2.7rem,9vw,4.4rem);line-height:1.02}
+h2{font-size:clamp(1.55rem,4.6vw,2.05rem);line-height:1.15}
+:lang(hi) h1,:lang(zh-CN) h1,:lang(ja) h1{font-size:clamp(2.3rem,8vw,3.8rem);line-height:1.15}
+:lang(hi) h2,:lang(zh-CN) h2,:lang(ja) h2{line-height:1.3}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:600}
+:lang(hi) .eyebrow,:lang(zh-CN) .eyebrow,:lang(ja) .eyebrow{font-family:var(--body);letter-spacing:.04em;font-size:.8rem}
+
+/* hero */
+.hero{padding-block:2.8rem 2.2rem;display:grid;gap:1.1rem}
+.hero .lede{font-size:1.06rem;color:var(--muted);max-width:36rem}
+.ket-hero{font-family:var(--mono);font-size:clamp(1rem,3.6vw,1.25rem);color:var(--ink);display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;align-items:center}
+.ket-hero b{color:var(--accent);font-weight:600}
+.legend{display:flex;align-items:center;gap:.55rem;font-size:.82rem;color:var(--muted)}
+.wheel{width:18px;height:18px;border-radius:50%;flex:none;background:conic-gradient(from 90deg,hsl(0 70% var(--phase-l)),hsl(90 70% var(--phase-l)),hsl(180 70% var(--phase-l)),hsl(270 70% var(--phase-l)),hsl(360 70% var(--phase-l)));transform:scaleX(-1)}
+
+/* rail */
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-block:1px solid var(--rule)}
+.rail .wrap{display:flex;gap:.35rem;overflow-x:auto;padding-block:.55rem;scrollbar-width:none;align-items:center}
+.rail .wrap::-webkit-scrollbar{display:none}
+.chip{flex:none;font-family:var(--mono);font-size:.76rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border:1px solid var(--rule);border-radius:999px;background:var(--panel);white-space:nowrap}
+:lang(hi) .chip,:lang(zh-CN) .chip,:lang(ja) .chip{font-family:var(--body);font-size:.8rem}
+.chip b{color:var(--accent);font-weight:600;margin-right:.3rem;font-family:var(--mono)}
+.chip.on{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+.chip.on b{color:var(--accent-soft)}
+.langbox{flex:none;margin-left:auto;padding-left:.6rem;display:flex;align-items:center;gap:.35rem}
+.langbox select{font-family:var(--body);font-size:.78rem;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:999px;padding:.3rem .55rem}
+.langbox svg{width:15px;height:15px;flex:none;color:var(--muted)}
+
+/* sections */
+section{padding-block:2.6rem 2.8rem;border-bottom:1px solid var(--rule);scroll-margin-top:3.2rem}
+section>.wrap{display:grid;gap:1.05rem}
+section .intro{color:var(--ink);max-width:40rem}
+section .intro em{font-style:normal;color:var(--accent);font-weight:600}
+.panel{background-color:var(--panel);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px;border:1px solid var(--rule);border-radius:10px;padding:1rem;display:grid;gap:.9rem;min-width:0}
+.cols{display:grid;gap:1rem;grid-template-columns:minmax(0,1fr)}
+@media (min-width:640px){.cols.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.check{font-size:.9rem;color:var(--muted);border-left:3px solid var(--accent);padding:.15rem 0 .15rem .8rem}
+.check b{color:var(--ink);font-weight:600}
+.run{font-family:var(--mono);font-size:.76rem;color:var(--muted);overflow-wrap:anywhere}
+
+/* controls */
+.row{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center}
+.btn{font-family:var(--mono);font-size:.78rem;line-height:1.2;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:7px;padding:.48rem .72rem;cursor:pointer;transition:border-color .15s,background .15s}
+:lang(hi) .btn,:lang(zh-CN) .btn,:lang(ja) .btn{font-family:var(--body);font-size:.82rem}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.gate{min-width:2.6rem;font-weight:600;font-size:.9rem;font-family:var(--mono)}
+.btn:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.slider{display:grid;grid-template-columns:auto minmax(0,1fr) 4.2rem;gap:.6rem;align-items:center;font-size:.85rem}
+.slider label{font-family:var(--mono);color:var(--muted);min-width:4.6rem}
+:lang(hi) .slider label,:lang(zh-CN) .slider label,:lang(ja) .slider label{font-family:var(--body)}
+.slider output{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=number]{font-family:var(--mono);font-size:.8rem;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:7px;padding:.42rem .5rem}
+.label{font-family:var(--mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+:lang(hi) .label,:lang(zh-CN) .label,:lang(ja) .label{font-family:var(--body);letter-spacing:.03em;font-size:.78rem}
+
+/* readouts */
+.readout{font-family:var(--mono);font-size:.86rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.msg{font-size:.9rem;min-height:1.4em}
+.msg.good{color:var(--good)} .msg.bad{color:var(--bad)}
+.bars{display:grid;gap:.3rem}
+.amp,.cnt{display:grid;grid-template-columns:3.6rem minmax(0,1fr) auto 3.4rem;gap:.55rem;align-items:center;font-family:var(--mono);font-size:.78rem;font-variant-numeric:tabular-nums}
+.cnt{grid-template-columns:3.6rem minmax(0,1fr) 3.4rem}
+.cnt.wide{grid-template-columns:minmax(6rem,11rem) minmax(0,1fr) 3.4rem}
+.cnt.wide span:first-child{font-family:var(--body);white-space:normal;overflow-wrap:anywhere}
+.amp.faint{opacity:.38}
+.amp .a{color:var(--muted);white-space:nowrap}
+.amp .p,.cnt .p{text-align:right}
+.track{height:.7rem;background:var(--sphere);border-radius:3px;overflow:hidden;border:1px solid var(--rule)}
+.fill{display:block;height:100%;border-radius:2px;transition:width .25s}
+.fill.sig{background:var(--signal)}
+.fill.acc{background:var(--accent)}
+canvas{display:block;width:100%}
+.sphere{aspect-ratio:1/1;max-width:300px;margin:0 auto;width:100%}
+.scroll{overflow-x:auto;min-width:0}
+.trace{display:grid;gap:.15rem;font-family:var(--mono);font-size:.78rem;color:var(--muted);overflow-x:auto}
+.trace span{white-space:pre}
+.trace span b{color:var(--ink);font-weight:600}
+.stats{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;font-family:var(--mono);font-size:.82rem;font-variant-numeric:tabular-nums}
+:lang(hi) .stats,:lang(zh-CN) .stats,:lang(ja) .stats{font-family:var(--body)}
+.stats b{font-weight:600;color:var(--ink)} .stats span{color:var(--muted)}
+.big{font-family:var(--display);font-size:2.2rem;line-height:1;color:var(--ink)}
+
+/* section-specific */
+.wire{position:relative;display:flex;gap:.8rem;align-items:center;padding:.4rem 0 .4rem 3.2rem}
+.wire::before{content:"";position:absolute;left:2.6rem;right:0;top:50%;border-top:2px solid var(--muted);opacity:.5}
+.wire .q{position:absolute;left:0;font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.slot{position:relative;width:2.8rem;height:2.8rem;font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--ink);background:var(--panel);border:1.5px dashed var(--muted);border-radius:7px;cursor:pointer}
+.slot.set{border-style:solid;border-color:var(--ink)}
+.matrix{display:inline-grid;grid-template-columns:auto auto;gap:.1rem 1rem;padding:.3rem .7rem;border-left:2px solid var(--ink);border-right:2px solid var(--ink);font-family:var(--mono);font-size:.85rem}
+.hist{display:flex;flex-wrap:wrap;gap:.3rem;min-height:2rem;align-items:center}
+.hist .g{font-family:var(--mono);font-size:.8rem;border:1px solid var(--ink);border-radius:5px;padding:.15rem .45rem;background:var(--panel)}
+.gauge{position:relative;height:1.6rem;background:var(--sphere);border:1px solid var(--rule);border-radius:4px;margin-bottom:1.4rem}
+.gauge .fill{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:3px}
+.gauge .mark{position:absolute;top:-.3rem;bottom:-.3rem;border-left:2px dashed var(--ink)}
+.gauge .mk{position:absolute;top:1.85rem;transform:translateX(-50%);font-family:var(--mono);font-size:.7rem;color:var(--muted);white-space:nowrap}
+.qubits{display:flex;gap:.6rem;flex-wrap:wrap}
+.qchip{width:4.2rem;height:4.2rem;border-radius:10px;border:2px solid var(--ink);background:var(--panel);font-family:var(--mono);font-size:1.4rem;font-weight:600;color:var(--ink);cursor:pointer;display:grid;place-items:center;line-height:1.1}
+.qchip small{display:block;font-size:.66rem;font-weight:400;color:var(--muted)}
+.qchip.err{border-color:var(--bad);color:var(--bad);box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 18%,transparent)}
+.syn{display:flex;gap:.6rem;flex-wrap:wrap}
+.syn span{font-family:var(--mono);font-size:.8rem;padding:.3rem .6rem;border-radius:6px;border:1px solid var(--rule);background:var(--panel)}
+:lang(hi) .syn span,:lang(zh-CN) .syn span,:lang(ja) .syn span{font-family:var(--body)}
+.syn span.hot{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.pill{display:inline-block;font-family:var(--mono);font-size:.72rem;padding:.12rem .5rem;border-radius:999px;border:1px solid var(--rule);color:var(--muted)}
+:lang(hi) .pill,:lang(zh-CN) .pill,:lang(ja) .pill{font-family:var(--body);font-size:.76rem}
+.pill.yes{border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
+.pill.ok{border-color:var(--good);color:var(--good)}
+.pill.no{border-color:var(--bad);color:var(--bad)}
+svg text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+svg .axis{stroke:var(--rule);stroke-width:1}
+svg .grid{stroke:var(--rule);stroke-width:1;stroke-dasharray:2 4}
+table{border-collapse:collapse;font-size:.84rem;min-width:34rem}
+th,td{text-align:left;padding:.45rem .6rem;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+:lang(hi) th,:lang(zh-CN) th,:lang(ja) th{font-family:var(--body);letter-spacing:.02em;font-size:.78rem}
+td:first-child{font-weight:600;white-space:nowrap}
+.timeline{display:grid;gap:.8rem;margin:0;padding:0;list-style:none}
+.timeline li{display:grid;grid-template-columns:4.8rem minmax(0,1fr);gap:.8rem;font-size:.92rem}
+.timeline .yr{font-family:var(--mono);font-size:.8rem;color:var(--accent);font-weight:600;padding-top:.12rem}
+footer{padding-block:2.4rem 3rem;color:var(--muted);font-size:.86rem}
+footer .wrap{display:grid;gap:.6rem}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="hero wrap">
+  <span class="eyebrow" data-i18n="hero.eyebrow"></span>
+  <h1 data-i18n="hero.title"></h1>
+  <p class="lede" data-i18n="hero.lede"></p>
+  <div class="ket-hero"><span><b>|ψ⟩</b> = α|0⟩ + β|1⟩</span><span>|α|² + |β|² = 1</span></div>
+  <div class="legend"><span class="wheel" aria-hidden="true"></span><span data-i18n="hero.legend"></span></div>
+</header>
+
+<nav class="rail" aria-label="Concepts">
+  <div class="wrap">
+    <a class="chip" href="#qubits"><b>1</b><span data-i18n="nav.1"></span></a>
+    <a class="chip" href="#superposition"><b>2</b><span data-i18n="nav.2"></span></a>
+    <a class="chip" href="#entanglement"><b>3</b><span data-i18n="nav.3"></span></a>
+    <a class="chip" href="#gates"><b>4</b><span data-i18n="nav.4"></span></a>
+    <a class="chip" href="#algorithms"><b>5</b><span data-i18n="nav.5"></span></a>
+    <a class="chip" href="#circuits"><b>6</b><span data-i18n="nav.6"></span></a>
+    <a class="chip" href="#hardware"><b>7</b><span data-i18n="nav.7"></span></a>
+    <a class="chip" href="#error-correction"><b>8</b><span data-i18n="nav.8"></span></a>
+    <a class="chip" href="#advantage"><b>9</b><span data-i18n="nav.9"></span></a>
+    <label class="langbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c3 3.2 3 15.8 0 19M12 2.5c-3 3.2-3 15.8 0 19"/></svg><select id="lang" data-i18n-aria="lang.label"></select></label>
+  </div>
+</nav>
+
+<main>
+<!-- 1 QUBITS -->
+<section id="qubits"><div class="wrap">
+  <span class="eyebrow" data-i18n="s1.eyebrow"></span>
+  <h2 data-i18n="s1.h2"></h2>
+  <p class="intro" data-i18n="s1.intro"></p>
+  <div class="panel">
+    <div class="cols two">
+      <canvas id="q1-sphere" class="sphere" role="img" data-i18n-aria="s1.sphereAria"></canvas>
+      <div style="display:grid;gap:.8rem;align-content:start">
+        <div class="slider"><label for="q1-theta" data-i18n="s1.theta"></label><input id="q1-theta" type="range" min="0" max="180" value="60"><output id="q1-theta-v">60°</output></div>
+        <div class="slider"><label for="q1-phi" data-i18n="s1.phi"></label><input id="q1-phi" type="range" min="0" max="359" value="0"><output id="q1-phi-v">0°</output></div>
+        <div class="row" data-i18n-aria="s1.presetsAria">
+          <button class="btn" data-q1="0,0">|0⟩</button><button class="btn" data-q1="180,0">|1⟩</button>
+          <button class="btn" data-q1="90,0">|+⟩</button><button class="btn" data-q1="90,180">|−⟩</button><button class="btn" data-q1="90,90">|i⟩</button>
+        </div>
+        <div class="readout" id="q1-ket"></div>
+        <div class="bars" id="q1-probs"></div>
+        <div class="readout" id="q1-bloch" style="color:var(--muted)"></div>
+      </div>
+    </div>
+    <div class="row"><button class="btn primary" id="q1-once" data-i18n="s1.once"></button><button class="btn" id="q1-100" data-i18n="s1.hundred"></button></div>
+    <div class="bars" id="q1-counts"></div>
+    <p class="msg" id="q1-msg" aria-live="polite"></p>
+  </div>
+  <p class="check" data-i18n="s1.check"></p>
+  <p class="run">python -m concepts.c01_qubits</p>
+</div></section>
+
+<!-- 2 SUPERPOSITION -->
+<section id="superposition"><div class="wrap">
+  <span class="eyebrow" data-i18n="s2.eyebrow"></span>
+  <h2 data-i18n="s2.h2"></h2>
+  <p class="intro" data-i18n="s2.intro"></p>
+  <div class="panel">
+    <div class="wire" id="s2-wire"><span class="q">|0⟩</span></div>
+    <div class="row">
+      <span class="label" data-i18n="s2.try"></span>
+      <button class="btn" data-s2="H,,">H</button><button class="btn" data-s2="H,H,">H H</button>
+      <button class="btn" data-s2="X,H,">X H</button><button class="btn" data-s2="X,H,H">X H H</button><button class="btn" data-s2="H,Z,H">H Z H</button>
+    </div>
+    <div class="trace" id="s2-trace"></div>
+    <div class="bars" id="s2-amps"></div>
+    <p class="msg" id="s2-note"></p>
+    <div class="row"><button class="btn primary" id="s2-run" data-i18n="s2.measure"></button></div>
+    <div class="bars" id="s2-counts"></div>
+  </div>
+  <p class="check" data-i18n="s2.check"></p>
+  <p class="run">python -m concepts.c02_superposition</p>
+</div></section>
+
+<!-- 3 ENTANGLEMENT -->
+<section id="entanglement"><div class="wrap">
+  <span class="eyebrow" data-i18n="s3.eyebrow"></span>
+  <h2 data-i18n="s3.h2"></h2>
+  <p class="intro" data-i18n="s3.intro"></p>
+  <div class="panel">
+    <div class="slider"><label for="e-a" data-i18n="s3.alice"></label><input id="e-a" type="range" min="-90" max="180" value="0"><output id="e-a-v">0°</output></div>
+    <div class="slider"><label for="e-b" data-i18n="s3.bob"></label><input id="e-b" type="range" min="-90" max="180" value="45"><output id="e-b-v">45°</output></div>
+    <div class="row"><button class="btn primary" id="e-run" data-i18n="s3.pairs"></button><button class="btn" id="e-chsh" data-i18n="s3.chsh"></button></div>
+    <div class="bars" id="e-counts"></div>
+    <div class="stats" id="e-stats"></div>
+    <div id="e-chsh-out" style="display:grid;gap:1rem"></div>
+  </div>
+  <p class="check" data-i18n="s3.check"></p>
+  <p class="run">python -m concepts.c03_entanglement</p>
+</div></section>
+
+<!-- 4 GATES -->
+<section id="gates"><div class="wrap">
+  <span class="eyebrow" data-i18n="s4.eyebrow"></span>
+  <h2 data-i18n="s4.h2"></h2>
+  <p class="intro" data-i18n="s4.intro"></p>
+  <div class="panel">
+    <div class="cols two">
+      <canvas id="g4-sphere" class="sphere" role="img" data-i18n-aria="s4.sphereAria"></canvas>
+      <div style="display:grid;gap:.8rem;align-content:start">
+        <div class="row" id="g4-gates" data-i18n-aria="s4.gatesAria"></div>
+        <div class="row"><button class="btn" id="g4-undo" data-i18n="s4.undo"></button><button class="btn" id="g4-reset" data-i18n="s4.reset"></button></div>
+        <div><span class="label" data-i18n="s4.applied"></span><div class="hist" id="g4-hist"></div></div>
+        <div><span class="label" data-i18n="s4.last"></span><div id="g4-matrix" class="readout" style="margin-top:.3rem"></div></div>
+        <div class="readout" id="g4-ket"></div>
+        <div class="bars" id="g4-probs"></div>
+      </div>
+    </div>
+    <p class="msg" id="g4-msg"></p>
+  </div>
+  <p class="check" data-i18n="s4.check"></p>
+  <p class="run">python -m concepts.c04_gates</p>
+</div></section>
+
+<!-- 5 ALGORITHMS -->
+<section id="algorithms"><div class="wrap">
+  <span class="eyebrow" data-i18n="s5.eyebrow"></span>
+  <h2 data-i18n="s5.h2"></h2>
+  <p class="intro" data-i18n="s5.intro"></p>
+  <div class="panel">
+    <div class="row">
+      <label class="label" for="g5-n" data-i18n="s5.qubits"></label>
+      <select id="g5-n"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+      <label class="label" for="g5-m" data-i18n="s5.marked"></label>
+      <input id="g5-m" type="number" min="0" max="15" value="11" style="width:5rem">
+      <button class="btn" id="g5-rand" data-i18n="s5.random"></button>
+    </div>
+    <canvas id="g5-chart" style="height:190px" role="img" data-i18n-aria="s5.chartAria"></canvas>
+    <div class="row">
+      <button class="btn" id="g5-oracle" data-i18n="s5.oracle"></button><button class="btn" id="g5-diffuse" data-i18n="s5.diffuse"></button>
+      <button class="btn primary" id="g5-iter" data-i18n="s5.round"></button><button class="btn" id="g5-opt" data-i18n="s5.opt"></button>
+      <button class="btn" id="g5-measure" data-i18n="s5.measure"></button><button class="btn" id="g5-reset" data-i18n="s5.reset"></button>
+    </div>
+    <div class="stats" id="g5-stats"></div>
+    <p class="msg" id="g5-msg" aria-live="polite"></p>
+  </div>
+  <p class="check" data-i18n="s5.check"></p>
+  <p class="run" data-i18n="s5.run"></p>
+</div></section>
+
+<!-- 6 CIRCUITS -->
+<section id="circuits"><div class="wrap">
+  <span class="eyebrow" data-i18n="s6.eyebrow"></span>
+  <h2 data-i18n="s6.h2"></h2>
+  <p class="intro" data-i18n="s6.intro"></p>
+  <div class="panel">
+    <div class="row">
+      <select id="c6-gate" data-i18n-aria="s6.gateAria"></select>
+      <label class="label" for="c6-target" data-i18n="s6.on"></label><select id="c6-target"><option value="0">q0</option><option value="1">q1</option><option value="2">q2</option></select>
+      <span id="c6-ctl-wrap" class="row" hidden><label class="label" for="c6-control" data-i18n="s6.control"></label><select id="c6-control"><option value="0">q0</option><option value="1" selected>q1</option><option value="2">q2</option></select></span>
+      <button class="btn primary" id="c6-add" data-i18n="s6.add"></button><button class="btn" id="c6-undo" data-i18n="s6.undo"></button><button class="btn" id="c6-clear" data-i18n="s6.clear"></button>
+    </div>
+    <div class="row"><span class="label" data-i18n="s6.presets"></span>
+      <button class="btn" data-c6="bell" data-i18n="s6.bell"></button><button class="btn" data-c6="ghz" data-i18n="s6.ghz"></button>
+      <button class="btn" data-c6="all" data-i18n="s6.all"></button><button class="btn" data-c6="phase" data-i18n="s6.phase"></button>
+    </div>
+    <div class="scroll" id="c6-svg"></div>
+    <p class="run" style="margin-top:-.4rem" data-i18n="s6.tap"></p>
+    <div class="stats" id="c6-stats"></div>
+    <div class="row" id="c6-ent"></div>
+    <div class="bars" id="c6-amps"></div>
+    <p class="msg" id="c6-msg"></p>
+  </div>
+  <p class="check" data-i18n="s6.check"></p>
+  <p class="run" data-i18n="s6.run"></p>
+</div></section>
+
+<!-- 7 HARDWARE -->
+<section id="hardware"><div class="wrap">
+  <span class="eyebrow" data-i18n="s7.eyebrow"></span>
+  <h2 data-i18n="s7.h2"></h2>
+  <p class="intro" data-i18n="s7.intro"></p>
+  <div class="panel">
+    <span class="label" data-i18n="s7.budget"></span>
+    <div class="slider"><label for="h-err" data-i18n="s7.czerr"></label><input id="h-err" type="range" min="0" max="200" value="0"><output id="h-err-v"></output></div>
+    <div class="slider"><label for="h-gates" data-i18n="s7.czgates"></label><input id="h-gates" type="range" min="0" max="200" value="100"><output id="h-gates-v"></output></div>
+    <div class="row"><span class="label" data-i18n="s7.rate"></span><button class="btn" data-herr="0.0039" data-i18n="s7.heron"></button><button class="btn" data-herr="0.00039" data-i18n="s7.x10"></button><button class="btn" data-herr="0.000039" data-i18n="s7.x100"></button></div>
+    <div class="stats"><span data-i18n="s7.chance"></span></div>
+    <div class="big" id="h-p"></div>
+    <div class="scroll" id="h-chart"></div>
+    <p class="msg" id="h-msg"></p>
+  </div>
+  <div class="panel">
+    <span class="label" data-i18n="s7.decoh"></span>
+    <div class="slider"><label for="h-t1">T1</label><input id="h-t1" type="range" min="20" max="300" value="145"><output id="h-t1-v"></output></div>
+    <div class="slider"><label for="h-t2">T2</label><input id="h-t2" type="range" min="10" max="600" value="88"><output id="h-t2-v"></output></div>
+    <div class="scroll" id="h-decay"></div>
+    <p class="msg" id="h-decay-msg"></p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th data-i18n="s7.th.tech"></th><th data-i18n="s7.th.ex"></th><th data-i18n="s7.th.strength"></th><th data-i18n="s7.th.challenge"></th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="s7.r1.t"></td><td>IBM, Google, Rigetti</td><td data-i18n="s7.r1.s"></td><td data-i18n="s7.r1.c"></td></tr>
+        <tr><td data-i18n="s7.r2.t"></td><td>Quantinuum, IonQ</td><td data-i18n="s7.r2.s"></td><td data-i18n="s7.r2.c"></td></tr>
+        <tr><td data-i18n="s7.r3.t"></td><td>QuEra, Pasqal, Atom Computing</td><td data-i18n="s7.r3.s"></td><td data-i18n="s7.r3.c"></td></tr>
+        <tr><td data-i18n="s7.r4.t"></td><td>PsiQuantum, Xanadu</td><td data-i18n="s7.r4.s"></td><td data-i18n="s7.r4.c"></td></tr>
+        <tr><td data-i18n="s7.r5.t"></td><td>Intel, Diraq</td><td data-i18n="s7.r5.s"></td><td data-i18n="s7.r5.c"></td></tr>
+        <tr><td data-i18n="s7.r6.t"></td><td>Microsoft</td><td data-i18n="s7.r6.s"></td><td data-i18n="s7.r6.c"></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="check" data-i18n="s7.check"></p>
+  <p class="run" data-i18n="s7.run"></p>
+</div></section>
+
+<!-- 8 ERROR CORRECTION -->
+<section id="error-correction"><div class="wrap">
+  <span class="eyebrow" data-i18n="s8.eyebrow"></span>
+  <h2 data-i18n="s8.h2"></h2>
+  <p class="intro" data-i18n="s8.intro"></p>
+  <div class="panel">
+    <div class="row"><span class="label" data-i18n="s8.stored"></span><button class="btn" id="x-l0" data-i18n="s8.l0"></button><button class="btn" id="x-l1" data-i18n="s8.l1"></button></div>
+    <div class="qubits" id="x-qubits"></div>
+    <div class="syn" id="x-syn"></div>
+    <p class="msg" id="x-dec"></p>
+    <div class="row"><button class="btn primary" id="x-fix" data-i18n="s8.fix"></button><button class="btn" id="x-reset" data-i18n="s8.clear"></button></div>
+    <p class="msg" id="x-result" aria-live="polite"></p>
+  </div>
+  <div class="panel">
+    <span class="label" data-i18n="s8.more"></span>
+    <div class="slider"><label for="x-p" data-i18n="s8.p"></label><input id="x-p" type="range" min="1" max="500" value="100"><output id="x-p-v"></output></div>
+    <div class="scroll" id="x-chart"></div>
+    <div class="row"><button class="btn" id="x-mc" data-i18n="s8.sim"></button></div>
+    <div class="bars" id="x-table"></div>
+  </div>
+  <p class="check" data-i18n="s8.check"></p>
+  <p class="run">python -m concepts.c08_error_correction</p>
+</div></section>
+
+<!-- 9 ADVANTAGE -->
+<section id="advantage"><div class="wrap">
+  <span class="eyebrow" data-i18n="s9.eyebrow"></span>
+  <h2 data-i18n="s9.h2"></h2>
+  <p class="intro" data-i18n="s9.intro"></p>
+  <div class="panel">
+    <div class="slider"><label for="a-n" data-i18n="s9.qubits"></label><input id="a-n" type="range" min="1" max="300" value="50"><output id="a-n-v"></output></div>
+    <div class="big" id="a-mem"></div>
+    <div class="bars" id="a-fits"></div>
+  </div>
+  <div class="panel">
+    <span class="label" data-i18n="s9.search"></span>
+    <div class="slider"><label for="a-N">N = 2^k</label><input id="a-N" type="range" min="4" max="60" value="20"><output id="a-N-v"></output></div>
+    <div class="stats" id="a-grover"></div>
+    <p class="msg" style="color:var(--muted)" data-i18n="s9.quad"></p>
+  </div>
+  <div class="panel">
+    <span class="label" data-i18n="s9.xeb"></span>
+    <p style="font-size:.9rem" data-i18n="s9.xebp"></p>
+    <div class="bars" id="a-xeb"></div>
+  </div>
+  <ol class="timeline">
+    <li><span class="yr">1994</span><span data-i18n="s9.t1"></span></li>
+    <li><span class="yr">1996</span><span data-i18n="s9.t2"></span></li>
+    <li><span class="yr">2019</span><span data-i18n="s9.t3"></span></li>
+    <li><span class="yr">2022</span><span data-i18n="s9.t4"></span></li>
+    <li><span class="yr">2024</span><span data-i18n="s9.t5"></span></li>
+    <li><span class="yr" data-i18n="s9.y6"></span><span data-i18n="s9.t6"></span></li>
+    <li><span class="yr">2026</span><span data-i18n="s9.t7"></span></li>
+  </ol>
+  <p class="check" data-i18n="s9.check"></p>
+  <p class="run">python -m concepts.c09_advantage</p>
+</div></section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n="foot.1"></p>
+    <p data-i18n="foot.2"></p>
+    <p data-i18n="foot.3"></p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+(() => {
+const I18N = /*__I18N__*/{};
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PI = Math.PI, DEG = PI / 180, R2 = Math.SQRT1_2, MINUS = "−";
+
+/* ---------------- i18n ---------------- */
+let LANG = "en";
+const FONT_LINKS = { hi: "Noto+Sans+Devanagari:wght@400;600;700", "zh-CN": "Noto+Sans+SC:wght@400;600;700", ja: "Noto+Sans+JP:wght@400;600;700" };
+function t(key, vars) {
+  let s = (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key] ?? key;
+  if (vars) for (const [k, v] of Object.entries(vars)) s = s.split(`{${k}}`).join(String(v));
+  return s;
+}
+function pickLang() {
+  let saved = null;
+  try { saved = localStorage.getItem("qlab-lang"); } catch (e) { /* storage unavailable */ }
+  if (saved && I18N[saved]) return saved;
+  const wanted = (navigator.languages || [navigator.language || "en"]).map(l => l.toLowerCase());
+  for (const w of wanted) {
+    const exact = Object.keys(I18N).find(c => c.toLowerCase() === w);
+    if (exact) return exact;
+    const base = Object.keys(I18N).find(c => c.toLowerCase().split("-")[0] === w.split("-")[0]);
+    if (base) return base;
+  }
+  return "en";
+}
+function applyLang(code) {
+  LANG = I18N[code] ? code : "en";
+  const meta = I18N[LANG]._meta || {};
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = meta.dir === "rtl" ? "rtl" : "ltr";
+  if (FONT_LINKS[LANG] && !document.getElementById("font-" + LANG)) {
+    const l = document.createElement("link"); l.id = "font-" + LANG; l.rel = "stylesheet";
+    l.href = `https://fonts.googleapis.com/css2?family=${FONT_LINKS[LANG]}&display=swap`;
+    document.head.appendChild(l);
+  }
+  $$("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  $$("[data-i18n-aria]").forEach(el => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
+  $("#lang").value = LANG;
+  try { localStorage.setItem("qlab-lang", LANG); } catch (e) { /* ignore */ }
+}
+const fmtInt = x => Math.round(x).toLocaleString(LANG);
+
+/* ---------------- simulator: state = arrays of real/imag parts, qubit 0 = rightmost bit ---------------- */
+const GATE = {
+  H: [R2, 0, R2, 0, R2, 0, -R2, 0], X: [0, 0, 1, 0, 1, 0, 0, 0], Y: [0, 0, 0, -1, 0, 1, 0, 0],
+  Z: [1, 0, 0, 0, 0, 0, -1, 0], S: [1, 0, 0, 0, 0, 0, 0, 1], T: [1, 0, 0, 0, 0, 0, R2, R2]
+};
+const RY = th => { const c = Math.cos(th / 2), s = Math.sin(th / 2); return [c, 0, -s, 0, s, 0, c, 0]; };
+function newState(n) { const N = 1 << n, s = { n, re: new Float64Array(N), im: new Float64Array(N) }; s.re[0] = 1; return s; }
+function apply(s, m, tq, c = -1) {
+  const tb = 1 << tq, cb = c >= 0 ? 1 << c : 0, re = s.re, im = s.im;
+  for (let i = 0; i < re.length; i++) {
+    if (i & tb) continue;
+    if (cb && !(i & cb)) continue;
+    const j = i | tb, xr = re[i], xi = im[i], yr = re[j], yi = im[j];
+    re[i] = m[0] * xr - m[1] * xi + m[2] * yr - m[3] * yi;
+    im[i] = m[0] * xi + m[1] * xr + m[2] * yi + m[3] * yr;
+    re[j] = m[4] * xr - m[5] * xi + m[6] * yr - m[7] * yi;
+    im[j] = m[4] * xi + m[5] * xr + m[6] * yi + m[7] * yr;
+  }
+  return s;
+}
+const probs = s => Float64Array.from(s.re, (r, i) => r * r + s.im[i] * s.im[i]);
+function sample(p, shots) {
+  const N = p.length, cum = new Float64Array(N); let acc = 0;
+  for (let i = 0; i < N; i++) { acc += p[i]; cum[i] = acc; }
+  const counts = new Array(N).fill(0);
+  for (let k = 0; k < shots; k++) {
+    const r = Math.random() * acc; let lo = 0, hi = N - 1;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (cum[mid] > r) hi = mid; else lo = mid + 1; }
+    counts[lo]++;
+  }
+  return counts;
+}
+function purity(s, q) {
+  const b = 1 << q; let r00 = 0, r11 = 0, xr = 0, xi = 0;
+  for (let i = 0; i < s.re.length; i++) {
+    if (i & b) continue;
+    const j = i | b;
+    r00 += s.re[i] ** 2 + s.im[i] ** 2; r11 += s.re[j] ** 2 + s.im[j] ** 2;
+    xr += s.re[i] * s.re[j] + s.im[i] * s.im[j]; xi += s.im[i] * s.re[j] - s.re[i] * s.im[j];
+  }
+  return r00 * r00 + r11 * r11 + 2 * (xr * xr + xi * xi);
+}
+
+/* ---------------- formatting ---------------- */
+const bits = (i, n) => i.toString(2).padStart(n, "0");
+const ket = (i, n) => `|${bits(i, n)}⟩`;
+const sgn = x => (x < -5e-4 ? MINUS : "+");
+const num = (x, d = 3) => sgn(x) + Math.abs(x).toFixed(d);
+function cplx(re, im, d = 3) {
+  if (Math.abs(im) < 5e-4) return num(re, d);
+  if (Math.abs(re) < 5e-4) return num(im, d) + "i";
+  return `(${num(re, d)}${sgn(im)}${Math.abs(im).toFixed(d)}i)`;
+}
+const pct = (x, d = 1) => (x * 100).toFixed(d) + "%";
+const phaseHue = (re, im) => ((Math.atan2(im, re) / DEG) + 360) % 360;
+const phaseColor = (re, im) => `hsl(${phaseHue(re, im).toFixed(0)} 70% var(--phase-l))`;
+function ampRows(s) {
+  const p = probs(s);
+  return Array.from(p, (pi, i) => `<div class="amp${pi < 1e-9 ? " faint" : ""}"><span>${ket(i, s.n)}</span><span class="track"><span class="fill" style="width:${(pi * 100).toFixed(2)}%;background:${phaseColor(s.re[i], s.im[i])}"></span></span><span class="a">${cplx(s.re[i], s.im[i])}</span><span class="p">${pct(pi)}</span></div>`).join("");
+}
+function countRows(labels, counts, cls = "sig") {
+  const total = counts.reduce((a, b) => a + b, 0) || 1;
+  return labels.map((l, i) => `<div class="cnt"><span>${l}</span><span class="track"><span class="fill ${cls}" style="width:${(counts[i] / total * 100).toFixed(1)}%"></span></span><span class="p">${counts[i]}</span></div>`).join("");
+}
+function probRows(p0, p1) {
+  return `<div class="cnt"><span>P(0)</span><span class="track"><span class="fill acc" style="width:${p0 * 100}%"></span></span><span class="p">${pct(p0)}</span></div><div class="cnt"><span>P(1)</span><span class="track"><span class="fill acc" style="width:${p1 * 100}%"></span></span><span class="p">${pct(p1)}</span></div>`;
+}
+function stateText(s) {
+  const parts = [];
+  for (let i = 0; i < s.re.length; i++) if (s.re[i] ** 2 + s.im[i] ** 2 > 1e-9) parts.push(`${cplx(s.re[i], s.im[i])}${ket(i, s.n)}`);
+  return parts.join(" ");
+}
+
+/* ---------------- canvas + Bloch sphere ---------------- */
+function ctx2d(cv) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), w = cv.clientWidth, h = cv.clientHeight;
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  return { c, w, h };
+}
+const AZ = -32 * DEG, EL = 16 * DEG;
+function proj(x, y, z) {
+  const x1 = x * Math.cos(AZ) - y * Math.sin(AZ), y1 = x * Math.sin(AZ) + y * Math.cos(AZ);
+  return { h: y1, v: z * Math.cos(EL) - x1 * Math.sin(EL), d: x1 * Math.cos(EL) + z * Math.sin(EL) };
+}
+function drawBloch(cv, vec) {
+  const { c, w, h } = ctx2d(cv);
+  if (!w) return;
+  const R = Math.min(w, h) * 0.36, cx = w / 2, cy = h / 2;
+  const muted = tok("--muted"), rule = tok("--rule"), acc = tok("--accent");
+  const P = (x, y, z) => { const q = proj(x, y, z); return [cx + R * q.h, cy - R * q.v, q.d]; };
+  c.beginPath(); c.arc(cx, cy, R, 0, 2 * PI); c.fillStyle = tok("--sphere"); c.fill(); c.strokeStyle = rule; c.lineWidth = 1; c.stroke();
+  const ring = fn => {
+    const N = 120;
+    for (let k = 0; k < N; k++) {
+      const a = P(...fn(k / N * 2 * PI)), b = P(...fn((k + 1) / N * 2 * PI)), front = a[2] + b[2] > 0;
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]);
+      c.strokeStyle = front ? muted : rule; c.globalAlpha = front ? 0.6 : 1; c.setLineDash(front ? [] : [3, 3]); c.stroke();
+    }
+    c.globalAlpha = 1; c.setLineDash([]);
+  };
+  ring(th => [Math.cos(th), Math.sin(th), 0]);
+  ring(th => [Math.cos(th), 0, Math.sin(th)]);
+  ring(th => [0, Math.cos(th), Math.sin(th)]);
+  [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(a => { const p1 = P(-a[0], -a[1], -a[2]), p2 = P(...a); c.beginPath(); c.moveTo(p1[0], p1[1]); c.lineTo(p2[0], p2[1]); c.strokeStyle = rule; c.stroke(); });
+  c.font = `13px ${tok("--mono")}`; c.fillStyle = muted; c.textAlign = "center"; c.textBaseline = "middle";
+  const lab = (txt, x, y, z) => { const p = P(x, y, z); c.fillText(txt, p[0], p[1]); };
+  lab("|0⟩", 0, 0, 1.24); lab("|1⟩", 0, 0, -1.24); lab("x", 1.32, 0, 0); lab("y", 0, 1.3, 0);
+  const [x, y, z] = vec, tip = P(x, y, z), base = P(x, y, 0), o = P(0, 0, 0);
+  c.setLineDash([2, 3]); c.strokeStyle = acc; c.globalAlpha = 0.55;
+  c.beginPath(); c.moveTo(tip[0], tip[1]); c.lineTo(base[0], base[1]); c.lineTo(o[0], o[1]); c.stroke();
+  c.setLineDash([]); c.globalAlpha = 1;
+  c.strokeStyle = acc; c.lineWidth = 3; c.lineCap = "round"; c.beginPath(); c.moveTo(o[0], o[1]); c.lineTo(tip[0], tip[1]); c.stroke();
+  c.fillStyle = acc; c.beginPath(); c.arc(tip[0], tip[1], 5.5, 0, 2 * PI); c.fill();
+  c.lineWidth = 1;
+}
+function animate(ms, step, done) {
+  if (RM) { step(1); done && done(); return; }
+  const t0 = performance.now();
+  const f = now => { const k = Math.min(1, (now - t0) / ms), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2; step(e); if (k < 1) requestAnimationFrame(f); else done && done(); };
+  requestAnimationFrame(f);
+}
+
+/* ---------------- 1 · qubits ---------------- */
+const q1 = { theta: 60, phi: 0, busy: false };
+function q1Amps() { const th = q1.theta * DEG, f = q1.phi * DEG, b = Math.sin(th / 2); return [Math.cos(th / 2), b * Math.cos(f), b * Math.sin(f)]; }
+function renderQ1() {
+  const [a, br, bi] = q1Amps(), p0 = a * a, p1 = br * br + bi * bi, th = q1.theta * DEG, f = q1.phi * DEG;
+  const vec = [Math.sin(th) * Math.cos(f), Math.sin(th) * Math.sin(f), Math.cos(th)];
+  drawBloch($("#q1-sphere"), vec);
+  $("#q1-theta").value = Math.round(q1.theta); $("#q1-phi").value = Math.round(q1.phi);
+  $("#q1-theta-v").textContent = Math.round(q1.theta) + "°"; $("#q1-phi-v").textContent = Math.round(q1.phi) + "°";
+  $("#q1-ket").textContent = `|ψ⟩ = ${a.toFixed(3)}|0⟩ ${cplx(br, bi)}|1⟩`;
+  $("#q1-probs").innerHTML = probRows(p0, p1);
+  $("#q1-bloch").textContent = t("s1.bloch", { x: num(vec[0], 2), y: num(vec[1], 2), z: num(vec[2], 2) });
+}
+$("#q1-theta").addEventListener("input", e => { q1.theta = +e.target.value; $("#q1-msg").textContent = ""; renderQ1(); });
+$("#q1-phi").addEventListener("input", e => { q1.phi = +e.target.value; $("#q1-msg").textContent = ""; renderQ1(); });
+$$("[data-q1]").forEach(b => b.addEventListener("click", () => { const [th, f] = b.dataset.q1.split(",").map(Number); q1.theta = th; q1.phi = f; $("#q1-msg").textContent = ""; $("#q1-counts").innerHTML = ""; renderQ1(); }));
+$("#q1-once").addEventListener("click", () => {
+  if (q1.busy) return;
+  const [, br, bi] = q1Amps(), p1 = br * br + bi * bi, out = Math.random() < p1 ? 1 : 0, from = q1.theta, to = out ? 180 : 0;
+  q1.busy = true;
+  animate(500, k => { q1.theta = from + (to - from) * k; renderQ1(); }, () => {
+    q1.busy = false;
+    $("#q1-msg").textContent = t("s1.msg.once", { out, p: pct(out ? p1 : 1 - p1, 0) });
+  });
+});
+$("#q1-100").addEventListener("click", () => {
+  const [, br, bi] = q1Amps(), p1 = br * br + bi * bi, c = sample([1 - p1, p1], 100);
+  $("#q1-counts").innerHTML = countRows(["0", "1"], c);
+  $("#q1-msg").textContent = t("s1.msg.hundred", { n: c[1], e: (p1 * 100).toFixed(0) });
+});
+
+/* ---------------- 2 · superposition ---------------- */
+const S2_OPTS = ["", "H", "X", "Z", "S"];
+let s2 = ["H", "H", ""];
+const slotWrap = $("#s2-wire");
+s2.forEach((_, i) => { const b = document.createElement("button"); b.className = "slot"; b.id = "s2-slot" + i; b.dataset.slot = i + 1; b.addEventListener("click", () => { s2[i] = S2_OPTS[(S2_OPTS.indexOf(s2[i]) + 1) % S2_OPTS.length]; $("#s2-counts").innerHTML = ""; renderS2(); }); slotWrap.appendChild(b); });
+function renderS2() {
+  s2.forEach((g, i) => { const b = $("#s2-slot" + i); b.textContent = g || "+"; b.classList.toggle("set", !!g); b.setAttribute("aria-label", t("s2.slotAria", { n: i + 1 })); });
+  const s = newState(1), lines = [`<span>${t("s2.start").padEnd(10)} <b>|0⟩</b></span>`];
+  let prev = null, last = "", hCount = 0;
+  for (const g of s2) {
+    if (!g) continue;
+    prev = { re: [...s.re], im: [...s.im] };
+    apply(s, GATE[g], 0); last = g; if (g === "H") hCount++;
+    lines.push(`<span>${t("s2.after", { g }).padEnd(10)} <b>${stateText(s)}</b></span>`);
+  }
+  $("#s2-trace").innerHTML = lines.join("");
+  $("#s2-amps").innerHTML = ampRows(s);
+  const p = probs(s), note = $("#s2-note");
+  note.textContent = "";
+  if (last === "H" && prev && prev.re[0] ** 2 + prev.im[0] ** 2 > 1e-9 && prev.re[1] ** 2 + prev.im[1] ** 2 > 1e-9) {
+    const a = [prev.re[0] * R2, prev.im[0] * R2], b = [prev.re[1] * R2, prev.im[1] * R2];
+    note.textContent = t("s2.note.h", { a: cplx(...a), b: cplx(...b), nb: cplx(-b[0], -b[1]) }) +
+      (Math.min(p[0], p[1]) < 1e-9 ? t("s2.note.cancel", { n: hCount }) : t("s2.note.partial"));
+  }
+}
+$$("[data-s2]").forEach(b => b.addEventListener("click", () => { s2 = b.dataset.s2.split(","); $("#s2-counts").innerHTML = ""; renderS2(); }));
+$("#s2-run").addEventListener("click", () => {
+  const s = newState(1); s2.forEach(g => g && apply(s, GATE[g], 0));
+  $("#s2-counts").innerHTML = countRows(["0", "1"], sample(probs(s), 1000));
+});
+
+/* ---------------- 3 · entanglement ---------------- */
+function bellCounts(a, b, shots) {
+  const s = newState(2); apply(s, GATE.H, 0); apply(s, GATE.X, 1, 0); apply(s, RY(-a * DEG), 0); apply(s, RY(-b * DEG), 1);
+  return sample(probs(s), shots);
+}
+const corr = c => (c[0] + c[3] - c[1] - c[2]) / (c[0] + c[1] + c[2] + c[3]);
+let eLast = null, eChsh = null;
+function syncE() { $("#e-a-v").textContent = $("#e-a").value + "°"; $("#e-b-v").textContent = $("#e-b").value + "°"; }
+function runE(reuse = false) {
+  const a = +$("#e-a").value, b = +$("#e-b").value;
+  if (!reuse || !eLast) eLast = { a, b, c: bellCounts(a, b, 1000) };
+  const c = eLast.c, tot = 1000;
+  $("#e-counts").innerHTML = countRows(["A0 B0", "A0 B1", "A1 B0", "A1 B1"], [c[0], c[2], c[1], c[3]]);
+  $("#e-stats").innerHTML = `<span>${t("s3.agree")} <b>${pct((c[0] + c[3]) / tot, 0)}</b></span><span>${t("s3.E", { e: num(corr(c), 2), t: num(Math.cos((eLast.a - eLast.b) * DEG), 2) })}</span><span>${t("s3.alone", { p0: pct((c[0] + c[2]) / tot, 0), p1: pct((c[1] + c[3]) / tot, 0) })}</span>`;
+}
+$("#e-a").addEventListener("input", () => { syncE(); runE(); });
+$("#e-b").addEventListener("input", () => { syncE(); runE(); });
+$("#e-run").addEventListener("click", () => runE());
+function renderChsh() {
+  if (!eChsh) return;
+  const { E, S } = eChsh, max = 3;
+  $("#e-chsh-out").innerHTML = `<div class="stats">${Object.entries(E).map(([k, v]) => `<span>E(${k.replace(/(a′?)(b′?)/, "$1,$2")}) <b>${num(v, 3)}</b></span>`).join("")}</div>
+    <div><div class="stats" style="margin-bottom:.4rem"><span>${t("s3.S", { S: S.toFixed(3) })}</span></div>
+    <div class="gauge" role="img" aria-label="${t("s3.gaugeAria", { S: S.toFixed(2) })}"><span class="fill" style="width:${Math.max(0, S) / max * 100}%"></span>
+    <span class="mark" style="left:${2 / max * 100}%"></span><span class="mk" style="left:${2 / max * 100}%">${t("s3.classical")}</span>
+    <span class="mark" style="left:${2 * Math.SQRT2 / max * 100}%;border-color:var(--accent)"></span><span class="mk" style="left:${2 * Math.SQRT2 / max * 100}%;transform:translateX(-30%)">2√2</span></div></div>
+    <p class="msg ${S > 2 ? "good" : "bad"}">${S > 2 ? t("s3.above") : t("s3.below")}</p>`;
+}
+$("#e-chsh").addEventListener("click", () => {
+  const set = [["a", 0], ["a′", 90]], setB = [["b", 45], ["b′", -45]], E = {};
+  for (const [an, av] of set) for (const [bn, bv] of setB) E[an + bn] = corr(bellCounts(av, bv, 2000));
+  eChsh = { E, S: E["ab"] + E["ab′"] + E["a′b"] - E["a′b′"] };
+  renderChsh();
+});
+
+/* ---------------- 4 · gates ---------------- */
+const AXIS = { X: [[1, 0, 0], PI], Y: [[0, 1, 0], PI], Z: [[0, 0, 1], PI], H: [[R2, 0, R2], PI], S: [[0, 0, 1], PI / 2], T: [[0, 0, 1], PI / 4] };
+const MAT = {
+  X: ["0", "1", "1", "0"], Y: ["0", "−i", "i", "0"], Z: ["1", "0", "0", "−1"],
+  H: ["1/√2", "1/√2", "1/√2", "−1/√2"], S: ["1", "0", "0", "i"], T: ["1", "0", "0", "e<sup>iπ/4</sup>"]
+};
+const g4 = { s: newState(1), hist: [], vec: [0, 0, 1], busy: false };
+function blochOf(s) { const [ar, br] = s.re, [ai, bi] = s.im; return [2 * (ar * br + ai * bi), 2 * (ar * bi - ai * br), ar * ar + ai * ai - br * br - bi * bi]; }
+function rotate(v, k, a) {
+  const c = Math.cos(a), s = Math.sin(a), d = k[0] * v[0] + k[1] * v[1] + k[2] * v[2];
+  const x = [k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0]];
+  return [0, 1, 2].map(i => v[i] * c + x[i] * s + k[i] * d * (1 - c));
+}
+function renderG4() {
+  drawBloch($("#g4-sphere"), g4.vec);
+  $("#g4-hist").innerHTML = g4.hist.length ? g4.hist.map(g => `<span class="g">${g}</span>`).join("") : `<span class="run">${t("s4.none")}</span>`;
+  const last = g4.hist[g4.hist.length - 1];
+  $("#g4-matrix").innerHTML = last ? `${last} = <span class="matrix">${MAT[last].map(e => `<span>${e}</span>`).join("")}</span>` : "—";
+  $("#g4-ket").textContent = `|ψ⟩ = ${stateText(g4.s)}`;
+  const p = probs(g4.s);
+  $("#g4-probs").innerHTML = probRows(p[0], p[1]);
+  const h = g4.hist.join("");
+  $("#g4-msg").textContent = h === "HX" ? t("s4.msg.hx") : h === "HZH" ? t("s4.msg.hzh") : h === "HH" ? t("s4.msg.hh") : "";
+}
+function applyG4(g) {
+  if (g4.busy) return;
+  const from = g4.vec.slice(), [k, ang] = AXIS[g];
+  apply(g4.s, GATE[g], 0); g4.hist.push(g);
+  const to = blochOf(g4.s);
+  g4.busy = true;
+  animate(420, e => { g4.vec = rotate(from, k, ang * e); drawBloch($("#g4-sphere"), g4.vec); }, () => { g4.vec = to; g4.busy = false; renderG4(); });
+}
+Object.keys(GATE).forEach(g => { const b = document.createElement("button"); b.className = "btn gate"; b.textContent = g; b.addEventListener("click", () => applyG4(g)); $("#g4-gates").appendChild(b); });
+$("#g4-undo").addEventListener("click", () => { if (g4.busy) return; g4.hist.pop(); g4.s = newState(1); g4.hist.forEach(g => apply(g4.s, GATE[g], 0)); g4.vec = blochOf(g4.s); renderG4(); });
+$("#g4-reset").addEventListener("click", () => { if (g4.busy) return; g4.hist = []; g4.s = newState(1); g4.vec = [0, 0, 1]; renderG4(); });
+
+/* ---------------- 5 · Grover ---------------- */
+const g5 = { n: 4, N: 16, m: 11, a: null, k: 0, timer: null, flipped: false, msg: null };
+const opt = () => Math.max(1, Math.floor(PI / 4 * Math.sqrt(g5.N)));
+function g5Say(key, vars, cls = "") { g5.msg = key ? { key, vars, cls } : null; const m = $("#g5-msg"); m.className = "msg " + cls; m.textContent = key ? t(key, vars) : ""; }
+function g5Reset() { clearInterval(g5.timer); g5.N = 1 << g5.n; g5.a = new Float64Array(g5.N).fill(1 / Math.sqrt(g5.N)); g5.k = 0; g5.flipped = false; g5Say(null); drawG5(); }
+function oracle() { g5.a[g5.m] *= -1; g5.flipped = !g5.flipped; }
+function diffuse() { let mean = 0; for (const v of g5.a) mean += v; mean /= g5.N; for (let i = 0; i < g5.N; i++) g5.a[i] = 2 * mean - g5.a[i]; if (g5.flipped) { g5.k++; g5.flipped = false; } }
+function drawG5() {
+  const { c, w, h } = ctx2d($("#g5-chart"));
+  if (!w) return;
+  const pad = 26, mid = h / 2, scale = (h / 2 - 14), bw = (w - pad) / g5.N;
+  c.strokeStyle = tok("--rule"); c.beginPath(); c.moveTo(pad, mid); c.lineTo(w, mid); c.stroke();
+  c.font = `11px ${tok("--mono")}`; c.fillStyle = tok("--muted"); c.textAlign = "right"; c.textBaseline = "middle";
+  c.fillText("+1", pad - 4, mid - scale); c.fillText("0", pad - 4, mid); c.fillText("−1", pad - 4, mid + scale);
+  const sig = tok("--signal"), acc = tok("--accent");
+  for (let i = 0; i < g5.N; i++) {
+    const v = g5.a[i], x = pad + i * bw + Math.max(0.5, bw * 0.12), bwid = Math.max(1, bw * 0.76);
+    c.fillStyle = i === g5.m ? acc : sig;
+    c.fillRect(x, v >= 0 ? mid - v * scale : mid, bwid, Math.abs(v) * scale);
+  }
+  let mean = 0; for (const v of g5.a) mean += v; mean /= g5.N;
+  c.setLineDash([5, 4]); c.strokeStyle = tok("--ink"); c.globalAlpha = .7; c.beginPath(); c.moveTo(pad, mid - mean * scale); c.lineTo(w, mid - mean * scale); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+  const P = g5.a[g5.m] ** 2;
+  $("#g5-stats").innerHTML = `<span>N <b>${g5.N}</b></span><span>${t("s5.st.marked")} <b>${g5.m}</b> = ${ket(g5.m, g5.n)}</span><span>${t("s5.st.rounds", { k: g5.k, o: opt() })}</span><span>${t("s5.st.P")} <b>${pct(P)}</b></span><span>${t("s5.st.classical", { n: g5.N / 2 })}</span>`;
+}
+function g5Status() {
+  const P = g5.a[g5.m] ** 2;
+  if (g5.k > opt()) g5Say("s5.msg.past");
+  else if (g5.k === opt()) g5Say("s5.msg.opt", { k: g5.k, p: pct(P) }, "good");
+  else g5Say(null);
+}
+function g5Round() { if (!g5.flipped) oracle(); diffuse(); drawG5(); g5Status(); }
+$("#g5-n").addEventListener("change", e => { g5.n = +e.target.value; const mx = (1 << g5.n) - 1; $("#g5-m").max = mx; if (g5.m > mx) { g5.m = mx; $("#g5-m").value = mx; } g5Reset(); });
+$("#g5-m").addEventListener("change", e => { const v = Math.max(0, Math.min((1 << g5.n) - 1, Math.round(+e.target.value || 0))); g5.m = v; e.target.value = v; g5Reset(); });
+$("#g5-rand").addEventListener("click", () => { g5.m = Math.floor(Math.random() * (1 << g5.n)); $("#g5-m").value = g5.m; g5Reset(); });
+$("#g5-oracle").addEventListener("click", () => { oracle(); drawG5(); g5Say(g5.flipped ? "s5.msg.oracle" : "s5.msg.oracle2"); });
+$("#g5-diffuse").addEventListener("click", () => { const was = g5.flipped; diffuse(); drawG5(); if (was) g5Status(); else g5Say("s5.msg.diffuse0"); });
+$("#g5-iter").addEventListener("click", g5Round);
+$("#g5-opt").addEventListener("click", () => {
+  clearInterval(g5.timer);
+  if (g5.k >= opt()) g5Reset();
+  if (RM) { while (g5.k < opt()) { oracle(); diffuse(); } drawG5(); g5Status(); return; }
+  g5.timer = setInterval(() => { if (g5.k >= opt()) { clearInterval(g5.timer); return; } g5Round(); }, 380);
+});
+$("#g5-measure").addEventListener("click", () => {
+  const p = Float64Array.from(g5.a, v => v * v), i = sample(p, 1).indexOf(1);
+  if (i === g5.m) g5Say("s5.msg.found", { i }, "good"); else g5Say("s5.msg.miss", { i, p: pct(p[g5.m], 0) }, "bad");
+});
+$("#g5-reset").addEventListener("click", () => g5Reset());
+
+/* ---------------- 6 · circuit builder ---------------- */
+const C6_GATES = ["H", "X", "Y", "Z", "S", "T", "CNOT", "CZ"];
+const c6 = { ops: [], msg: null };
+const PRESETS = {
+  bell: [{ g: "H", t: 0 }, { g: "CNOT", c: 0, t: 1 }],
+  ghz: [{ g: "H", t: 0 }, { g: "CNOT", c: 0, t: 1 }, { g: "CNOT", c: 1, t: 2 }],
+  all: [{ g: "H", t: 0 }, { g: "H", t: 1 }, { g: "H", t: 2 }],
+  phase: [{ g: "H", t: 0 }, { g: "T", t: 0 }, { g: "T", t: 0 }, { g: "S", t: 0 }]
+};
+C6_GATES.forEach(g => { const o = document.createElement("option"); o.value = g; if (g === "CNOT") o.dataset.i18n = "s6.cnot"; else if (g === "CZ") o.dataset.i18n = "s6.cz"; else o.textContent = g; $("#c6-gate").appendChild(o); });
+const is2q = g => g === "CNOT" || g === "CZ";
+function c6State() { const s = newState(3); for (const o of c6.ops) { if (o.g === "CNOT") apply(s, GATE.X, o.t, o.c); else if (o.g === "CZ") apply(s, GATE.Z, o.t, o.c); else apply(s, GATE[o.g], o.t); } return s; }
+function c6Say(key, cls = "") { c6.msg = key ? { key, cls } : null; const m = $("#c6-msg"); m.className = "msg " + cls; m.textContent = key ? t(key) : ""; }
+function renderC6() {
+  const n = 3, col = 46, x0 = 70, W = Math.max(300, x0 + c6.ops.length * col + 30), H = 26 + n * 46, wy = q => 24 + q * 46;
+  let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t("s6.svgAria")}">`;
+  for (let q = 0; q < n; q++) svg += `<text x="6" y="${wy(q) + 4}">q${q} |0⟩</text><line x1="54" x2="${W - 8}" y1="${wy(q)}" y2="${wy(q)}" stroke="var(--muted)" stroke-width="1.5" opacity=".6"/>`;
+  c6.ops.forEach((o, i) => {
+    const x = x0 + i * col;
+    svg += `<g data-i="${i}" style="cursor:pointer"><rect x="${x - 20}" y="4" width="40" height="${H - 8}" fill="transparent"/>`;
+    if (is2q(o.g)) {
+      svg += `<line x1="${x}" x2="${x}" y1="${wy(o.c)}" y2="${wy(o.t)}" stroke="var(--ink)" stroke-width="1.5"/><circle cx="${x}" cy="${wy(o.c)}" r="4.5" fill="var(--ink)"/>`;
+      svg += o.g === "CNOT"
+        ? `<circle cx="${x}" cy="${wy(o.t)}" r="11" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><line x1="${x - 11}" x2="${x + 11}" y1="${wy(o.t)}" y2="${wy(o.t)}" stroke="var(--ink)" stroke-width="1.5"/><line x1="${x}" x2="${x}" y1="${wy(o.t) - 11}" y2="${wy(o.t) + 11}" stroke="var(--ink)" stroke-width="1.5"/>`
+        : `<circle cx="${x}" cy="${wy(o.t)}" r="4.5" fill="var(--ink)"/>`;
+    } else {
+      svg += `<rect x="${x - 15}" y="${wy(o.t) - 15}" width="30" height="30" rx="5" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><text x="${x}" y="${wy(o.t) + 5}" text-anchor="middle" style="fill:var(--ink);font-size:14px;font-weight:600">${o.g}</text>`;
+    }
+    svg += `</g>`;
+  });
+  $("#c6-svg").innerHTML = svg + `</svg>`;
+  $$("#c6-svg g[data-i]").forEach(g => g.addEventListener("click", () => { c6.ops.splice(+g.dataset.i, 1); renderC6(); }));
+  const s = c6State(), lvl = [0, 0, 0];
+  for (const o of c6.ops) { const qs = is2q(o.g) ? [o.c, o.t] : [o.t]; const L = Math.max(...qs.map(q => lvl[q])) + 1; qs.forEach(q => lvl[q] = L); }
+  $("#c6-stats").innerHTML = `<span>${t("s6.depth")} <b>${Math.max(...lvl)}</b></span><span>${t("s6.gates")} <b>${c6.ops.length}</b></span><span>${t("s6.twoq")} <b>${c6.ops.filter(o => is2q(o.g)).length}</b></span>`;
+  $("#c6-ent").innerHTML = [0, 1, 2].map(q => purity(s, q) < 0.999 ? `<span class="pill yes">${t("s6.ent", { q })}</span>` : `<span class="pill">${t("s6.ind", { q })}</span>`).join("");
+  $("#c6-amps").innerHTML = ampRows(s);
+}
+$("#c6-gate").addEventListener("change", e => { $("#c6-ctl-wrap").hidden = !is2q(e.target.value); });
+$("#c6-add").addEventListener("click", () => {
+  const g = $("#c6-gate").value, tq = +$("#c6-target").value, c = +$("#c6-control").value;
+  c6Say(null);
+  if (is2q(g) && c === tq) { c6Say("s6.msg.same", "bad"); return; }
+  if (c6.ops.length >= 16) { c6Say("s6.msg.max"); return; }
+  c6.ops.push(is2q(g) ? { g, t: tq, c } : { g, t: tq }); renderC6();
+});
+$("#c6-undo").addEventListener("click", () => { c6.ops.pop(); renderC6(); });
+$("#c6-clear").addEventListener("click", () => { c6.ops = []; renderC6(); });
+$$("[data-c6]").forEach(b => b.addEventListener("click", () => { c6.ops = PRESETS[b.dataset.c6].map(o => ({ ...o })); c6Say(null); renderC6(); }));
+
+/* ---------------- 7 · hardware ---------------- */
+const ERR_MIN = 1e-5, ERR_MAX = 2e-2;
+const errFromIdx = i => ERR_MIN * (ERR_MAX / ERR_MIN) ** (i / 200);
+const idxFromErr = e => Math.round(200 * Math.log(e / ERR_MIN) / Math.log(ERR_MAX / ERR_MIN));
+const gatesFromIdx = i => Math.max(1, Math.round(10 ** (i * 4 / 200)));
+$("#h-err").value = idxFromErr(0.0039);
+function svgFrame(W, H, aria) { return `<svg width="100%" viewBox="0 0 ${W} ${H}" style="min-width:300px;display:block" role="img" aria-label="${aria}">`; }
+function renderBudget() {
+  const e = errFromIdx(+$("#h-err").value), G = gatesFromIdx(+$("#h-gates").value), P = (1 - e) ** G, half = Math.log(2) / -Math.log(1 - e);
+  $("#h-err-v").textContent = e < 1e-3 ? (e * 100).toFixed(3) + "%" : (e * 100).toFixed(2) + "%";
+  $("#h-gates-v").textContent = fmtInt(G);
+  $("#h-p").textContent = pct(P, P < 0.001 ? 3 : 1);
+  const W = 600, H = 200, L = 44, R = 12, T = 12, B = 30, X = g => L + (Math.log10(g) / 4) * (W - L - R), Y = p => T + (1 - p) * (H - T - B);
+  let s = svgFrame(W, H, t("s7.chartAria"));
+  [0, .25, .5, .75, 1].forEach(p => s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(p)}" y2="${Y(p)}"/><text x="${L - 6}" y="${Y(p) + 4}" text-anchor="end">${p * 100}%</text>`);
+  [1, 10, 100, 1000, 10000].forEach(g => s += `<text x="${X(g)}" y="${H - 10}" text-anchor="middle">${fmtInt(g)}</text>`);
+  let d = ""; for (let k = 0; k <= 120; k++) { const g = 10 ** (k / 30); d += (k ? "L" : "M") + X(g).toFixed(1) + " " + Y((1 - e) ** g).toFixed(1); }
+  s += `<path d="${d}" fill="none" stroke="var(--signal)" stroke-width="2.2"/><circle cx="${X(G)}" cy="${Y(P)}" r="6" fill="var(--accent)" stroke="var(--panel)" stroke-width="2"/></svg>`;
+  $("#h-chart").innerHTML = s;
+  $("#h-msg").textContent = t("s7.msg.budget", { g: fmtInt(half) });
+}
+function renderDecay() {
+  const t1 = +$("#h-t1").value; let t2 = +$("#h-t2").value;
+  if (t2 > 2 * t1) { t2 = 2 * t1; $("#h-t2").value = t2; }
+  $("#h-t1-v").textContent = t1 + " µs"; $("#h-t2-v").textContent = t2 + " µs";
+  const tmax = 2.5 * Math.max(t1, t2), W = 600, H = 200, L = 44, R = 12, T = 12, B = 30, X = tt => L + tt / tmax * (W - L - R), Y = p => T + (1 - p) * (H - T - B);
+  let s = svgFrame(W, H, t("s7.decayAria"));
+  [0, .5, 1].forEach(p => s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(p)}" y2="${Y(p)}"/><text x="${L - 6}" y="${Y(p) + 4}" text-anchor="end">${p * 100}%</text>`);
+  for (let k = 0; k <= 4; k++) { const tt = tmax * k / 4; s += `<text x="${X(tt)}" y="${H - 10}" text-anchor="middle">${Math.round(tt)} µs</text>`; }
+  const path = f => { let d = ""; for (let k = 0; k <= 100; k++) { const tt = tmax * k / 100; d += (k ? "L" : "M") + X(tt).toFixed(1) + " " + Y(f(tt)).toFixed(1); } return d; };
+  s += `<path d="${path(tt => Math.exp(-tt / t1))}" fill="none" stroke="var(--accent)" stroke-width="2.2"/><path d="${path(tt => Math.exp(-tt / t2))}" fill="none" stroke="var(--signal)" stroke-width="2.2" stroke-dasharray="6 4"/>`;
+  s += `<text x="${W - R}" y="${T + 12}" text-anchor="end" style="fill:var(--accent)">${t("s7.energy")}</text><text x="${W - R}" y="${T + 28}" text-anchor="end" style="fill:var(--signal)">${t("s7.phase")}</text></svg>`;
+  $("#h-decay").innerHTML = s;
+  $("#h-decay-msg").textContent = t("s7.msg.decay", { n: fmtInt(t2 * 1000 / 84) });
+}
+["h-err", "h-gates"].forEach(id => $("#" + id).addEventListener("input", renderBudget));
+["h-t1", "h-t2"].forEach(id => $("#" + id).addEventListener("input", renderDecay));
+$$("[data-herr]").forEach(b => b.addEventListener("click", () => { $("#h-err").value = idxFromErr(+b.dataset.herr); renderBudget(); }));
+
+/* ---------------- 8 · error correction ---------------- */
+const x8 = { L: 0, d: [0, 0, 0], result: null };
+const SYN = { "00": -1, "10": 0, "11": 1, "01": 2 };
+function xSay(r) { x8.result = r; const el = $("#x-result"); el.className = "msg " + (r ? r.cls : ""); el.textContent = r ? t(r.key, r.vars) : ""; }
+function renderX() {
+  $("#x-l0").classList.toggle("primary", x8.L === 0); $("#x-l1").classList.toggle("primary", x8.L === 1);
+  $("#x-qubits").innerHTML = x8.d.map((v, i) => `<button class="qchip${v !== x8.L ? " err" : ""}" data-x="${i}" aria-label="${t("s8.qAria", { i, v })}">${v}<small>d${i}</small></button>`).join("");
+  $$("[data-x]").forEach(b => b.addEventListener("click", () => { const i = +b.dataset.x; x8.d[i] ^= 1; xSay(null); renderX(); }));
+  const s0 = x8.d[0] ^ x8.d[1], s1 = x8.d[1] ^ x8.d[2], target = SYN[`${s0}${s1}`];
+  $("#x-syn").innerHTML = `<span class="${s0 ? "hot" : ""}">${t("s8.parity", { a: 0, b: 1, v: s0 })}</span><span class="${s1 ? "hot" : ""}">${t("s8.parity", { a: 1, b: 2, v: s1 })}</span>`;
+  $("#x-dec").textContent = target < 0 ? t("s8.syn00") : t("s8.synX", { s: `${s0}${s1}`, t: target });
+  $("#x-fix").disabled = target < 0;
+  xSay(x8.result);
+}
+$("#x-fix").addEventListener("click", () => {
+  const before = x8.d.filter(v => v !== x8.L).length, s0 = x8.d[0] ^ x8.d[1], s1 = x8.d[1] ^ x8.d[2], tg = SYN[`${s0}${s1}`];
+  if (tg >= 0) x8.d[tg] ^= 1;
+  const majority = x8.d.reduce((a, b) => a + b, 0) >= 2 ? 1 : 0;
+  x8.result = majority === x8.L ? { key: "s8.ok", vars: { L: x8.L }, cls: "good" } : { key: "s8.bad", vars: { n: before, m: majority }, cls: "bad" };
+  renderX();
+});
+$("#x-reset").addEventListener("click", () => { x8.d = [x8.L, x8.L, x8.L]; x8.result = null; renderX(); });
+$("#x-l0").addEventListener("click", () => { x8.L = 0; x8.d = [0, 0, 0]; x8.result = null; renderX(); });
+$("#x-l1").addEventListener("click", () => { x8.L = 1; x8.d = [1, 1, 1]; x8.result = null; renderX(); });
+const comb = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; };
+const failExact = (p, d) => { let s = 0; for (let k = (d + 1) / 2; k <= d; k++) s += comb(d, k) * p ** k * (1 - p) ** (d - k); return s; };
+const DS = [1, 3, 5, 7], DCOL = ["var(--muted)", "var(--signal)", "var(--accent)", "var(--good)"];
+let xMC = null;
+function renderThreshold() {
+  const p = +$("#x-p").value / 1000, mc = xMC && xMC.p === p ? xMC.v : null;
+  $("#x-p-v").textContent = p.toFixed(3);
+  const W = 600, H = 230, L = 48, R = 12, T = 12, B = 30, X = q => L + q / 0.5 * (W - L - R), Y = v => T + (-Math.log10(Math.max(v, 1e-6)) / 6) * (H - T - B);
+  let s = svgFrame(W, H, t("s8.chartAria"));
+  for (let e = 0; e <= 6; e++) s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(10 ** -e)}" y2="${Y(10 ** -e)}"/><text x="${L - 6}" y="${Y(10 ** -e) + 4}" text-anchor="end">1e−${e}</text>`;
+  [0, .1, .2, .3, .4, .5].forEach(q => s += `<text x="${X(q)}" y="${H - 10}" text-anchor="middle">${q}</text>`);
+  DS.forEach((d, j) => { let path = ""; for (let k = 1; k <= 100; k++) { const q = k / 200; path += (k > 1 ? "L" : "M") + X(q).toFixed(1) + " " + Y(failExact(q, d)).toFixed(1); } s += `<path d="${path}" fill="none" stroke="${DCOL[j]}" stroke-width="2"/>`; s += `<text x="${L + 8}" y="${T + 14 + j * 15}" style="fill:${DCOL[j]}">d = ${d}${d === 1 ? " " + t("s8.nocode") : ""}</text>`; });
+  s += `<line x1="${X(p)}" x2="${X(p)}" y1="${T}" y2="${H - B}" stroke="var(--ink)" stroke-dasharray="4 3"/>`;
+  DS.forEach((d, j) => s += `<circle cx="${X(p)}" cy="${Y(failExact(p, d))}" r="4.5" fill="${DCOL[j]}"/>`);
+  $("#x-chart").innerHTML = s + "</svg>";
+  const exact = DS.map(d => failExact(p, d)), mx = Math.max(...exact, 1e-12);
+  $("#x-table").innerHTML = DS.map((d, j) => `<div class="cnt" style="grid-template-columns:4.6rem minmax(0,1fr) 9rem"><span>d = ${d}</span><span class="track"><span class="fill" style="width:${exact[j] / mx * 100}%;background:${DCOL[j]}"></span></span><span class="p">${exact[j] < 1e-4 ? exact[j].toExponential(1) : pct(exact[j], 2)}${mc ? ` · ${t("s8.simLabel")} ${pct(mc[j], 2)}` : ""}</span></div>`).join("");
+}
+$("#x-p").addEventListener("input", () => renderThreshold());
+$("#x-mc").addEventListener("click", () => {
+  const p = +$("#x-p").value / 1000, trials = 20000;
+  xMC = { p, v: DS.map(d => { let fail = 0; for (let k = 0; k < trials; k++) { let f = 0; for (let q = 0; q < d; q++) if (Math.random() < p) f++; if (f > d / 2) fail++; } return fail / trials; }) };
+  renderThreshold();
+});
+
+/* ---------------- 9 · advantage ---------------- */
+const UNITS = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+function memText(n) { const e = n + 4; if (e < 90) { const u = Math.min(8, Math.floor(e / 10)); return `${fmtInt(2 ** (e - 10 * u))} ${UNITS[u]}`; } return t("s9.bytes", { e: (e * Math.LOG10E * Math.LN2).toFixed(0) }); }
+function renderAdv() {
+  const n = +$("#a-n").value, log10b = (n + 4) * Math.log10(2);
+  $("#a-n-v").textContent = n;
+  $("#a-mem").textContent = memText(n);
+  const checks = [["s9.phone", Math.log10(8e9)], ["s9.laptop", Math.log10(16 * 2 ** 30)], ["s9.super", 16], ["s9.universe", 80]];
+  $("#a-fits").innerHTML = checks.map(([key, lim], i) => i < 3
+    ? `<div class="row"><span class="pill ${log10b <= lim ? "ok" : "no"}">${log10b <= lim ? t("s9.fits") : t("s9.toobig")}</span><span>${t(key)}</span></div>`
+    : `<div class="row"><span class="pill ${log10b > lim ? "no" : ""}">${log10b > lim ? t("s9.yes") : t("s9.notyet")}</span><span>${t(key)}</span></div>`).join("");
+}
+function bigNum(x) { return x < 1e15 ? fmtInt(x) : x.toExponential(2).replace("e+", " × 10^"); }
+function renderGroverCount() {
+  const k = +$("#a-N").value, N = 2 ** k, cl = N / 2, gr = PI / 4 * Math.sqrt(N);
+  $("#a-N-v").textContent = k;
+  $("#a-grover").innerHTML = `<span>N <b>${bigNum(N)}</b></span><span>${t("s9.classical", { n: bigNum(cl) })}</span><span>${t("s9.grover", { n: bigNum(gr) })}</span><span>${t("s9.ratio")} <b>${bigNum(cl / gr)}×</b></span>`;
+}
+function renderXeb() {
+  $("#a-xeb").innerHTML = [["s9.ideal", 1.03], ["s9.noisy", 0.73], ["s9.random", 0.0]].map(([key, v]) => `<div class="cnt wide"><span>${t(key)}</span><span class="track"><span class="fill sig" style="width:${Math.max(0, v) / 1.1 * 100}%"></span></span><span class="p">${v >= 0 ? "+" : ""}${v.toFixed(2)}</span></div>`).join("");
+}
+$("#a-n").addEventListener("input", renderAdv);
+$("#a-N").addEventListener("input", renderGroverCount);
+
+/* ---------------- boot, language, theme + resize redraws, rail highlight ---------------- */
+const langSel = $("#lang");
+Object.keys(I18N).forEach(code => { const o = document.createElement("option"); o.value = code; o.textContent = (I18N[code]._meta || {}).name || code; langSel.appendChild(o); });
+function renderAll() {
+  renderQ1(); renderS2(); runE(true); renderChsh(); renderG4(); drawG5(); if (g5.msg) g5Say(g5.msg.key, g5.msg.vars, g5.msg.cls);
+  renderC6(); if (c6.msg) c6Say(c6.msg.key, c6.msg.cls);
+  renderBudget(); renderDecay(); renderX(); renderThreshold(); renderAdv(); renderGroverCount(); renderXeb();
+}
+function drawCanvases() { renderQ1(); drawBloch($("#g4-sphere"), g4.vec); drawG5(); }
+applyLang(pickLang());
+syncE(); g5Reset(); c6.ops = PRESETS.ghz.map(o => ({ ...o }));
+renderAll();
+langSel.addEventListener("change", e => { applyLang(e.target.value); renderAll(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => requestAnimationFrame(drawCanvases));
+new MutationObserver(() => requestAnimationFrame(drawCanvases)).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
+if ("ResizeObserver" in window) { const ro = new ResizeObserver(() => drawCanvases()); ["#q1-sphere", "#g4-sphere", "#g5-chart"].forEach(s => ro.observe($(s))); }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCanvases);
+const chips = new Map($$(".chip").map(a => [a.getAttribute("href").slice(1), a])), rail = $(".rail .wrap");
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    chips.forEach(c => c.classList.remove("on"));
+    const c = chips.get(e.target.id);
+    if (c) { c.classList.add("on"); rail.scrollTo({ left: c.offsetLeft - rail.offsetLeft - rail.clientWidth / 2 + c.clientWidth / 2, behavior: RM ? "auto" : "smooth" }); }
+  }), { rootMargin: "-45% 0px -50% 0px" });
+  $$("main section").forEach(s => io.observe(s));
+}
+})();
+</script>
